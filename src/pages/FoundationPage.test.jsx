@@ -1,13 +1,19 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { CurrentUserContext } from '@/features/auth/current-user';
 import FoundationPage from './FoundationPage';
+
+// Rendered behind RequireAuth in the app, which provides the user.
+const SESSION = { user: { name: 'Ada Admin', roles: ['ADMIN'], permissions: ['dashboard.access'] }, csrfToken: 'c' };
 
 function renderPage() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={client}>
-      <FoundationPage />
+      <CurrentUserContext.Provider value={SESSION.user}>
+        <FoundationPage />
+      </CurrentUserContext.Provider>
     </QueryClientProvider>,
   );
 }

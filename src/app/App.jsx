@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { RouterProvider } from 'react-router';
-import { ApiError } from '@/services/api-client';
+import { ApiError, onSessionExpired } from '@/services/api-client';
+import { authKeys, isSessionQuery } from '@/services/auth.service';
+import Toaster from '@/components/ui/Toaster';
 import { router } from './router';
 
 function makeQueryClient() {
@@ -19,9 +21,21 @@ function makeQueryClient() {
 
 export default function App() {
   const [queryClient] = useState(makeQueryClient);
+
+  // A failed refresh means the session is gone: drop cached admin data; RequireAuth then redirects to /login.
+  useEffect(
+    () =>
+      onSessionExpired(() => {
+        queryClient.removeQueries({ predicate: (q) => !isSessionQuery(q) });
+        queryClient.setQueryData(authKeys.session(), null);
+      }),
+    [queryClient],
+  );
+
   return (
     <QueryClientProvider client={queryClient}>
       <RouterProvider router={router} />
+      <Toaster />
     </QueryClientProvider>
   );
 }

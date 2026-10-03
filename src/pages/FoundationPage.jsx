@@ -1,7 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 import { getApiHealth, systemKeys } from '@/services/system.service';
 import { API_URL } from '@/services/api-client';
+import { LogOut } from 'lucide-react';
+import Avatar from '@/components/ui/Avatar';
+import Button from '@/components/ui/Button';
 import Logo from '@/components/ui/Logo';
+import { useCurrentUser } from '@/features/auth/current-user';
+import { useLogout } from '@/features/auth/use-auth';
 
 function statusOf(query) {
   if (query.isPending) return { label: 'Checking…', tone: 'bg-foreground-subtle', text: 'text-foreground-muted' };
@@ -23,13 +28,28 @@ export default function FoundationPage() {
     queryFn: ({ signal }) => getApiHealth({ signal }),
     refetchInterval: 30_000,
   });
+  const user = useCurrentUser();
+  const logout = useLogout();
   const status = statusOf(health);
   // A 503 still reports database/version in the error details.
   const info = health.data ?? health.error?.details;
 
   return (
     <main className="mx-auto flex min-h-dvh w-full max-w-4xl flex-col justify-center px-6 py-16">
-      <Logo label="Admin" className="mb-10" />
+      <header className="mb-12 flex items-center justify-between gap-4">
+        <Logo label="Admin" />
+        <div className="flex items-center gap-3">
+          <Avatar user={user} size="md" />
+          <div className="hidden sm:block">
+            <p className="text-sm font-medium text-foreground">{user.name}</p>
+            <p className="text-xs text-foreground-subtle">{user.roles.join(' · ')}</p>
+          </div>
+          <Button variant="secondary" size="sm" loading={logout.isPending} onClick={() => logout.mutate()}>
+            <LogOut className="size-4" aria-hidden="true" />
+            Sign out
+          </Button>
+        </div>
+      </header>
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-foreground-subtle">Admin · Phase 1</p>
       <h1 className="mt-4 text-4xl font-semibold text-foreground">Dashboard foundation</h1>
       <p className="mt-3 max-w-lg text-foreground-muted">
