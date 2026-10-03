@@ -2,7 +2,7 @@ import { useSyncExternalStore } from 'react';
 import { motion, useMotionValue, useReducedMotion, useSpring, useTransform } from 'motion/react';
 import { BookOpen, GraduationCap, ShieldCheck, Users } from 'lucide-react';
 import { LogoMark } from '@/components/ui/Logo';
-import { brand } from '@/constants/brand';
+import { useI18n } from '@/i18n/I18nProvider';
 
 const ease = [0.45, 0, 0.55, 1];
 
@@ -135,6 +135,7 @@ function Chip({ icon: Icon, label, tone = 'bg-white/15' }) {
 }
 
 function Scene({ animate }) {
+  const { t } = useI18n();
   const still = useReducedMotion() || !animate;
   const px = useMotionValue(0);
   const py = useMotionValue(0);
@@ -172,16 +173,16 @@ function Scene({ animate }) {
         <AnalyticsWindow still={still} />
       </Floating>
       <Floating className="left-[7%] top-[12%]" depth={-30} delay={0.5} {...shared}>
-        <Chip icon={BookOpen} label="Courses" tone="bg-cobalt-500/40" />
+        <Chip icon={BookOpen} label={t('showcase.courses')} tone="bg-cobalt-500/40" />
       </Floating>
       <Floating className="right-[8%] top-[9%]" depth={28} delay={0.7} {...shared}>
-        <Chip icon={Users} label="Students" tone="bg-ember-500/35" />
+        <Chip icon={Users} label={t('showcase.students')} tone="bg-ember-500/35" />
       </Floating>
       <Floating className="left-[8%] bottom-[8%]" depth={-22} delay={0.9} {...shared}>
-        <Chip icon={GraduationCap} label="Instructors" tone="bg-emerald-500/35" />
+        <Chip icon={GraduationCap} label={t('showcase.instructors')} tone="bg-emerald-500/35" />
       </Floating>
       <Floating className="right-[8%] bottom-[12%]" depth={24} delay={1.1} {...shared}>
-        <Chip icon={ShieldCheck} label="Roles & permissions" tone="bg-white/15" />
+        <Chip icon={ShieldCheck} label={t('showcase.roles')} tone="bg-white/15" />
       </Floating>
     </div>
   );
@@ -189,6 +190,7 @@ function Scene({ animate }) {
 
 /** Desktop-only illustrated half of the dashboard sign-in layout. */
 export default function AuthShowcase() {
+  const { t } = useI18n();
   const desktop = useDesktop();
   return (
     <aside aria-hidden="true" className="relative flex h-full flex-col overflow-hidden bg-ink-950 text-white">
@@ -199,12 +201,12 @@ export default function AuthShowcase() {
       <div className="pointer-events-none relative px-14 pb-14 pt-2">
         <div className="flex items-center gap-3">
           <LogoMark className="size-9" />
-          <span className="rounded-full border border-white/20 px-2.5 py-0.5 text-xs font-medium text-white/70">Admin</span>
+          <span className="rounded-full border border-white/20 px-2.5 py-0.5 text-xs font-medium text-white/70">{t('common.admin')}</span>
         </div>
         <p className="mt-5 max-w-md text-4xl font-semibold leading-tight tracking-tight">
-          Run {brand.name} with clarity.
+          {t('showcase.headline')}
         </p>
-        <p className="mt-3 max-w-md text-white/60">Courses, learners, instructors and revenue — one secure workspace.</p>
+        <p className="mt-3 max-w-md text-white/60">{t('showcase.body')}</p>
       </div>
     </aside>
   );

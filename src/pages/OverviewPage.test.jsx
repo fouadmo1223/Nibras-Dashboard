@@ -1,8 +1,9 @@
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import I18nProvider from '@/i18n/I18nProvider';
 import { CurrentUserContext } from '@/features/auth/current-user';
-import FoundationPage from './FoundationPage';
+import OverviewPage from './OverviewPage';
 
 // Rendered behind RequireAuth in the app, which provides the user.
 const SESSION = { user: { name: 'Ada Admin', roles: ['ADMIN'], permissions: ['dashboard.access'] }, csrfToken: 'c' };
@@ -10,11 +11,13 @@ const SESSION = { user: { name: 'Ada Admin', roles: ['ADMIN'], permissions: ['da
 function renderPage() {
   const client = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={client}>
-      <CurrentUserContext.Provider value={SESSION.user}>
-        <FoundationPage />
-      </CurrentUserContext.Provider>
-    </QueryClientProvider>,
+    <I18nProvider locale="en">
+      <QueryClientProvider client={client}>
+        <CurrentUserContext.Provider value={SESSION.user}>
+          <OverviewPage />
+        </CurrentUserContext.Provider>
+      </QueryClientProvider>
+    </I18nProvider>,
   );
 }
 
@@ -27,7 +30,7 @@ function stubFetch(status, body) {
 
 afterEach(() => vi.unstubAllGlobals());
 
-describe('FoundationPage', () => {
+describe('OverviewPage', () => {
   it('shows operational status with database and version from the API', async () => {
     stubFetch(200, { success: true, data: { status: 'ok', database: 'up', version: '0.1.0' } });
     renderPage();

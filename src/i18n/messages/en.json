@@ -1,0 +1,200 @@
+{
+  "meta": {
+    "title": "{brand} Admin"
+  },
+  "common": {
+    "skipToContent": "Skip to content",
+    "admin": "Admin",
+    "cancel": "Cancel",
+    "confirm": "Confirm",
+    "close": "Close",
+    "reload": "Reload",
+    "backToOverview": "Back to overview",
+    "dismissNotification": "Dismiss notification",
+    "offline": "We couldn’t reach {brand}. Check your connection and try again.",
+    "genericError": "Something went wrong. Please try again."
+  },
+  "nav": {
+    "main": "Main navigation",
+    "breadcrumb": "Breadcrumb",
+    "dashboard": "Dashboard",
+    "overview": "Overview",
+    "settings": "Settings",
+    "groups": {
+      "workspace": "Workspace",
+      "system": "System"
+    },
+    "collapse": "Collapse sidebar",
+    "expand": "Expand sidebar",
+    "openMenu": "Open navigation",
+    "closeMenu": "Close navigation"
+  },
+  "search": {
+    "open": "Search or jump to…",
+    "label": "Command palette",
+    "placeholder": "Type a command or search…",
+    "empty": "No results for “{query}”.",
+    "groups": {
+      "pages": "Pages",
+      "actions": "Actions"
+    },
+    "actions": {
+      "themeLight": "Use light theme",
+      "themeDark": "Use dark theme",
+      "themeSystem": "Use system theme",
+      "language": "Switch language to {language}",
+      "toggleSidebar": "Collapse or expand the sidebar",
+      "signOut": "Sign out"
+    },
+    "hints": {
+      "navigate": "to navigate",
+      "select": "to select",
+      "close": "to close"
+    }
+  },
+  "user": {
+    "menu": "Account menu",
+    "signedInAs": "Signed in as",
+    "settings": "Settings"
+  },
+  "roles": {
+    "SUPER_ADMIN": "Super Admin",
+    "ADMIN": "Admin",
+    "INSTRUCTOR": "Instructor",
+    "STUDENT": "Student"
+  },
+  "theme": {
+    "label": "Theme",
+    "change": "Change theme, current: {theme}",
+    "light": "Light",
+    "dark": "Dark",
+    "system": "System"
+  },
+  "language": {
+    "label": "Language",
+    "change": "Change language, current: {language}"
+  },
+  "overview": {
+    "greeting": "Welcome back, {name}",
+    "title": "Overview",
+    "subtitle": "Platform health at a glance. Learning and revenue analytics arrive with the next modules.",
+    "api": {
+      "title": "API connection",
+      "recheck": "Re-check",
+      "checking": "Checking…",
+      "ok": "Operational",
+      "degraded": "Degraded",
+      "down": "Unreachable",
+      "endpoint": "Endpoint",
+      "database": "Database",
+      "version": "Version"
+    },
+    "account": {
+      "title": "Your access",
+      "roles": "Roles",
+      "permissions": {
+        "one": "{count} permission",
+        "other": "{count} permissions"
+      }
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Personalise the dashboard. These preferences are saved on this device.",
+    "appearance": {
+      "title": "Appearance",
+      "description": "Theme and accent colors. Every combination meets WCAG AA contrast."
+    },
+    "primary": "Primary color",
+    "secondary": "Secondary color",
+    "accents": {
+      "cobalt": "Cobalt",
+      "violet": "Violet",
+      "teal": "Teal",
+      "graphite": "Graphite",
+      "ember": "Ember",
+      "amber": "Amber"
+    },
+    "layout": {
+      "title": "Layout",
+      "description": "How much room the sidebar takes."
+    },
+    "sidebar": {
+      "expanded": "Expanded",
+      "compact": "Compact"
+    },
+    "language": {
+      "title": "Language",
+      "description": "Also saved to your account, so emails arrive in this language."
+    },
+    "preview": {
+      "title": "Preview",
+      "primary": "Primary action",
+      "secondary": "Secondary",
+      "badge": "New",
+      "link": "Text link"
+    },
+    "reset": "Reset to defaults"
+  },
+  "auth": {
+    "checking": "Checking your session",
+    "login": {
+      "title": "Sign in",
+      "subtitle": "Use your {brand} staff account.",
+      "forgot": "Forgot?",
+      "submit": "Sign in"
+    },
+    "forgot": {
+      "title": "Reset password",
+      "subtitle": "We’ll email you a link to choose a new password.",
+      "back": "Back to sign in",
+      "checkInbox": "Check your inbox",
+      "submit": "Send reset link"
+    },
+    "noAccess": {
+      "title": "No access to the admin dashboard",
+      "body": "You’re signed in as {email}, which doesn’t have dashboard access. Ask an administrator if you think this is a mistake.",
+      "switchAccount": "Sign in with another account"
+    }
+  },
+  "fields": {
+    "email": "Email",
+    "password": "Password"
+  },
+  "validation": {
+    "emailRequired": "Enter your email.",
+    "emailInvalid": "Enter a valid email address.",
+    "passwordRequired": "Enter your password."
+  },
+  "password": {
+    "show": "Show password",
+    "hide": "Hide password",
+    "levels": {
+      "tooShort": "Too short",
+      "okay": "Okay",
+      "good": "Good",
+      "strong": "Strong",
+      "excellent": "Excellent"
+    }
+  },
+  "signOut": {
+    "button": "Sign out",
+    "title": "Sign out of the dashboard?",
+    "description": "You’ll need to sign in again to manage {brand} on this device.",
+    "confirm": "Sign out"
+  },
+  "showcase": {
+    "courses": "Courses",
+    "students": "Students",
+    "instructors": "Instructors",
+    "roles": "Roles & permissions",
+    "headline": "Run {brand} with clarity.",
+    "body": "Courses, learners, instructors and revenue — one secure workspace."
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "This page doesn’t exist.",
+    "crashTitle": "Something went wrong",
+    "crashBody": "An unexpected error interrupted this page. Reloading usually helps."
+  }
+}

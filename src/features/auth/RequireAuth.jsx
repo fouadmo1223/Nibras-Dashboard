@@ -3,6 +3,7 @@ import { ShieldAlert } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Avatar from '@/components/ui/Avatar';
 import Logo from '@/components/ui/Logo';
+import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { CurrentUserContext } from './current-user';
 import SignOutButton from './SignOutButton';
@@ -17,14 +18,15 @@ function FullScreen({ children }) {
  * UX only — every API call is authorised server-side regardless.
  */
 export default function RequireAuth({ permissions = [DASHBOARD_ACCESS], children }) {
+  const { t, locale } = useI18n();
   const location = useLocation();
   const session = useSession();
 
   if (session.isPending) {
     return (
       <FullScreen>
-        <div className="flex flex-col items-center gap-4" aria-busy="true" aria-label="Checking your session">
-          <Logo label="Admin" />
+        <div className="flex flex-col items-center gap-4" aria-busy="true" aria-label={t('auth.checking')}>
+          <Logo label={t('common.admin')} lang={locale} />
           <div className="h-1 w-40 overflow-hidden rounded-full bg-surface-muted">
             <div className="h-full w-1/3 animate-pulse rounded-full bg-primary" />
           </div>
@@ -36,7 +38,7 @@ export default function RequireAuth({ permissions = [DASHBOARD_ACCESS], children
   if (session.isError) {
     return (
       <FullScreen>
-        <Alert tone="error" title={errorMessage(session.error)} className="max-w-md" />
+        <Alert tone="error" title={errorMessage(session.error, t)} className="max-w-md" />
       </FullScreen>
     );
   }
@@ -57,12 +59,9 @@ export default function RequireAuth({ permissions = [DASHBOARD_ACCESS], children
               <ShieldAlert className="size-4" aria-hidden="true" />
             </span>
           </div>
-          <h1 className="mt-5 text-xl font-semibold text-foreground">No access to the admin dashboard</h1>
-          <p className="mt-2 text-sm text-foreground-muted">
-            You’re signed in as <strong className="text-foreground">{session.data.user.email}</strong>, which doesn’t have
-            dashboard access. Ask an administrator if you think this is a mistake.
-          </p>
-          <SignOutButton size="md" className="mt-6" label="Sign in with another account" />
+          <h1 className="mt-5 text-xl font-semibold text-foreground">{t('auth.noAccess.title')}</h1>
+          <p className="mt-2 text-sm text-foreground-muted">{t('auth.noAccess.body', { email: session.data.user.email })}</p>
+          <SignOutButton size="md" className="mt-6" label={t('auth.noAccess.switchAccount')} />
         </div>
       </FullScreen>
     );

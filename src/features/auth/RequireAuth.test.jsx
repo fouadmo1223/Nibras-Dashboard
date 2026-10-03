@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import I18nProvider from '@/i18n/I18nProvider';
 import { createMemoryRouter, RouterProvider } from 'react-router';
 import RequireAuth from './RequireAuth';
 import LoginPage from '@/pages/LoginPage';
@@ -44,9 +45,11 @@ function renderAt(path) {
     { initialEntries: [path] },
   );
   render(
-    <QueryClientProvider client={client}>
-      <RouterProvider router={router} />
-    </QueryClientProvider>,
+    <I18nProvider locale="en">
+      <QueryClientProvider client={client}>
+        <RouterProvider router={router} />
+      </QueryClientProvider>
+    </I18nProvider>,
   );
   return router;
 }

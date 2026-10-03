@@ -7,6 +7,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="robots" content="noindex, nofollow" />
     <title>Nibras Admin</title>
+    <!-- Applies saved preferences (stores/preferences-store.js) before first paint: theme, accents, language, direction. -->
+    <script>
+      (function () {
+        try {
+          var s = JSON.parse(localStorage.getItem('nibras.dashboard.preferences') || '{}').state || {};
+          var r = document.documentElement;
+          if (s.theme === 'light' || s.theme === 'dark') r.setAttribute('data-theme', s.theme);
+          if (typeof s.primary === 'string') r.setAttribute('data-primary', s.primary);
+          if (typeof s.secondary === 'string') r.setAttribute('data-secondary', s.secondary);
+          var lang = s.locale || ((navigator.languages || [])[0] || '').slice(0, 2);
+          if (lang === 'ar') { r.lang = 'ar'; r.dir = 'rtl'; }
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

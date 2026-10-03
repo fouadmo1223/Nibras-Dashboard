@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { authKeys, isSessionQuery, getSession, login, logout } from '@/services/auth.service';
+import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { toast } from '@/stores/toast-store';
 
@@ -19,11 +20,12 @@ export function useLogin() {
 }
 
 export function useLogout() {
+  const { t } = useI18n();
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: logout,
     onSuccess: (result) => toast.success(result.message),
-    onError: (error) => toast.error(errorMessage(error)),
+    onError: (error) => toast.error(errorMessage(error, t)),
     onSettled: () => {
       // Update the session in place (observers stay attached), then drop all other, private, data.
       queryClient.setQueryData(authKeys.session(), null);

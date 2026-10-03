@@ -36,3 +36,6 @@ export async function getSession() {
 }
 
 export const forgotPassword = (email) => apiRequest('/auth/forgot-password', { method: 'POST', body: { email } });
+
+/** Saves profile fields (name, locale). The saved locale is the language of the user's emails. */
+export const updateProfile = (body) => apiRequest('/users/me', { method: 'PATCH', body });

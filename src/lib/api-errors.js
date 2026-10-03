@@ -1,16 +1,13 @@
 import { ApiError } from '@/services/api-client';
 
-const OFFLINE = 'We couldn’t reach Nibras. Check your connection and try again.';
-const GENERIC = 'Something went wrong. Please try again.';
-
 /**
- * The message to show for a failed request: the API's own message whenever the
- * server answered; local copy only when there was no usable server response.
+ * The message to show for a failed request: the API's own (already translated) message
+ * whenever the server answered; local copy, via `t`, only without a usable response.
  */
-export function errorMessage(error) {
-  if (!(error instanceof ApiError)) return GENERIC;
-  if (error.code === 'NETWORK_ERROR') return OFFLINE;
-  return error.code === 'UNKNOWN_ERROR' ? GENERIC : error.message;
+export function errorMessage(error, t) {
+  if (!(error instanceof ApiError)) return t('common.genericError');
+  if (error.code === 'NETWORK_ERROR') return t('common.offline');
+  return error.code === 'UNKNOWN_ERROR' ? t('common.genericError') : error.message;
 }
 
 /**

@@ -59,6 +59,8 @@ async function send(path, { method = 'GET', body, query, headers, signal } = {})
       signal,
       headers: {
         Accept: 'application/json',
+        // The dashboard language, so API messages come back translated.
+        'Accept-Language': document.documentElement.lang || 'en',
         // FormData (file uploads) sets its own multipart boundary header.
         ...(body !== undefined && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
         ...(!SAFE_METHODS.has(method) && csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),

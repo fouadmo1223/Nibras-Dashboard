@@ -4,6 +4,7 @@ import { RouterProvider } from 'react-router';
 import { ApiError, onSessionExpired } from '@/services/api-client';
 import { authKeys, isSessionQuery } from '@/services/auth.service';
 import Toaster from '@/components/ui/Toaster';
+import I18nProvider, { useI18n } from '@/i18n/I18nProvider';
 import { router } from './router';
 
 function makeQueryClient() {
@@ -17,6 +18,15 @@ function makeQueryClient() {
       },
     },
   });
+}
+
+/** Keeps the browser tab title in the dashboard language. */
+function DocumentTitle() {
+  const { t } = useI18n();
+  useEffect(() => {
+    document.title = t('meta.title');
+  }, [t]);
+  return null;
 }
 
 export default function App() {
@@ -33,9 +43,12 @@ export default function App() {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <RouterProvider router={router} />
-      <Toaster />
-    </QueryClientProvider>
+    <I18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <DocumentTitle />
+        <RouterProvider router={router} />
+        <Toaster />
+      </QueryClientProvider>
+    </I18nProvider>
   );
 }

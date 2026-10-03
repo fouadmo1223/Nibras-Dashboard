@@ -1,20 +1,22 @@
 
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
+import { useI18n } from '@/i18n/I18nProvider';
 import { cn } from '@/lib/cn';
 import { passwordStrength } from '@/features/auth/auth-schemas';
 import { inputClassName } from './Input';
 
 const STRENGTH = [
-  { label: 'Too short', bar: 'bg-error' },
-  { label: 'Okay', bar: 'bg-warning' },
-  { label: 'Good', bar: 'bg-warning' },
-  { label: 'Strong', bar: 'bg-success' },
-  { label: 'Excellent', bar: 'bg-success' },
+  { level: 'tooShort', bar: 'bg-error' },
+  { level: 'okay', bar: 'bg-warning' },
+  { level: 'good', bar: 'bg-warning' },
+  { level: 'strong', bar: 'bg-success' },
+  { level: 'excellent', bar: 'bg-success' },
 ];
 
 /** Password field with a visibility toggle; pass `strengthValue` (the watched value) to show a strength meter. */
 export default function PasswordInput({ className, strengthValue, ref, ...props }) {
+  const { t } = useI18n();
   const [visible, setVisible] = useState(false);
   const score = passwordStrength(strengthValue);
 
@@ -30,7 +32,7 @@ export default function PasswordInput({ className, strengthValue, ref, ...props 
         <button
           type="button"
           onClick={() => setVisible((v) => !v)}
-          aria-label={visible ? 'Hide password' : 'Show password'}
+          aria-label={visible ? t('password.hide') : t('password.show')}
           aria-pressed={visible}
           className="absolute inset-y-0 end-0 grid w-11 place-items-center rounded-e-md text-foreground-subtle transition-colors hover:text-foreground"
         >
@@ -50,7 +52,7 @@ export default function PasswordInput({ className, strengthValue, ref, ...props 
               />
             ))}
           </div>
-          <span className="w-16 text-end text-xs text-foreground-subtle">{STRENGTH[score].label}</span>
+          <span className="w-16 text-end text-xs text-foreground-subtle">{t(`password.levels.${STRENGTH[score].level}`)}</span>
         </div>
       ) : null}
     </div>
