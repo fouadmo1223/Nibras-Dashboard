@@ -121,12 +121,15 @@ export default function Menu({ label, triggerClassName, triggerContent, items, h
                   lang={item.lang}
                   onClick={() => select(item)}
                   className={cn(
-                    'flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-start text-sm outline-none transition-colors',
-                    'text-foreground hover:bg-surface-muted focus-visible:bg-surface-muted',
-                    item.tone === 'danger' && 'text-error',
+                    'group/item flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-start text-sm outline-none',
+                    'transition-[background-color,color,padding] duration-150 ease-standard',
+                    // Brand-tinted hover/focus (visible on both themes) with a small nudge toward the reading direction.
+                    'text-foreground hover:bg-primary-soft hover:ps-4 hover:text-primary focus-visible:bg-primary-soft focus-visible:ps-4 focus-visible:text-primary',
+                    item.selected && 'font-medium',
+                    item.tone === 'danger' && 'text-error hover:bg-error-soft hover:text-error focus-visible:bg-error-soft focus-visible:text-error',
                   )}
                 >
-                  {Icon && <Icon className="size-4 shrink-0 text-foreground-muted" aria-hidden="true" />}
+                  {Icon && <Icon className="size-4 shrink-0 text-foreground-muted transition-colors group-hover/item:text-current group-focus-visible/item:text-current" aria-hidden="true" />}
                   <span className="flex-1">{item.label}</span>
                   {item.selected && <Check className="size-4 text-primary" aria-hidden="true" />}
                 </button>
