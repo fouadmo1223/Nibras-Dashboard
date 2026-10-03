@@ -22,7 +22,7 @@ export default function Toaster() {
       className="pointer-events-none fixed inset-x-4 bottom-4 z-50 flex flex-col items-center gap-2 sm:inset-x-auto sm:end-6 sm:bottom-6 sm:items-end"
     >
         {toasts.map((toast) => {
-          const { icon: Icon, accent } = TONES[toastoast.tone];
+          const { icon: Icon, accent } = TONES[toast.tone];
           return (
             <div
               key={toast.id}
