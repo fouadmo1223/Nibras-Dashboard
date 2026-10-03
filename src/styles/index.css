@@ -20,6 +20,27 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* Tailwind v4 dropped the pointer cursor on buttons; restore it for everything clickable. */
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  [role^="menuitem"],
+  [role="option"],
+  [role="radio"],
+  [role="tab"],
+  summary,
+  label[for],
+  select,
+  input[type="checkbox"],
+  input[type="radio"],
+  input[type="file"] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   :focus-visible {
     outline: 2px solid var(--ring);
     outline-offset: 2px;
