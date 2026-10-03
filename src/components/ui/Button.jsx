@@ -22,10 +22,12 @@ export default function Button({
   className,
   children,
   type = 'button',
+  ref,
   ...props
 }) {
   return (
     <button
+      ref={ref}
       type={type}
       disabled={disabled || loading}
       aria-busy={loading || undefined}

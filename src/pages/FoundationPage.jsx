@@ -1,12 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { getApiHealth, systemKeys } from '@/services/system.service';
 import { API_URL } from '@/services/api-client';
-import { LogOut } from 'lucide-react';
 import Avatar from '@/components/ui/Avatar';
-import Button from '@/components/ui/Button';
 import Logo from '@/components/ui/Logo';
 import { useCurrentUser } from '@/features/auth/current-user';
-import { useLogout } from '@/features/auth/use-auth';
+import SignOutButton from '@/features/auth/SignOutButton';
 
 function statusOf(query) {
   if (query.isPending) return { label: 'Checking…', tone: 'bg-foreground-subtle', text: 'text-foreground-muted' };
@@ -29,7 +27,6 @@ export default function FoundationPage() {
     refetchInterval: 30_000,
   });
   const user = useCurrentUser();
-  const logout = useLogout();
   const status = statusOf(health);
   // A 503 still reports database/version in the error details.
   const info = health.data ?? health.error?.details;
@@ -44,10 +41,7 @@ export default function FoundationPage() {
             <p className="text-sm font-medium text-foreground">{user.name}</p>
             <p className="text-xs text-foreground-subtle">{user.roles.join(' · ')}</p>
           </div>
-          <Button variant="secondary" size="sm" loading={logout.isPending} onClick={() => logout.mutate()}>
-            <LogOut className="size-4" aria-hidden="true" />
-            Sign out
-          </Button>
+          <SignOutButton />
         </div>
       </header>
       <p className="font-mono text-xs uppercase tracking-[0.2em] text-foreground-subtle">Admin · Phase 1</p>

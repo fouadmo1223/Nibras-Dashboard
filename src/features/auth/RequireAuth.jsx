@@ -2,11 +2,11 @@ import { Navigate, useLocation } from 'react-router';
 import { ShieldAlert } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Avatar from '@/components/ui/Avatar';
-import Button from '@/components/ui/Button';
 import Logo from '@/components/ui/Logo';
 import { errorMessage } from '@/lib/api-errors';
 import { CurrentUserContext } from './current-user';
-import { DASHBOARD_ACCESS, useLogout, useSession } from './use-auth';
+import SignOutButton from './SignOutButton';
+import { DASHBOARD_ACCESS, useSession } from './use-auth';
 
 function FullScreen({ children }) {
   return <main className="grid min-h-dvh place-items-center px-6">{children}</main>;
@@ -19,7 +19,6 @@ function FullScreen({ children }) {
 export default function RequireAuth({ permissions = [DASHBOARD_ACCESS], children }) {
   const location = useLocation();
   const session = useSession();
-  const logout = useLogout();
 
   if (session.isPending) {
     return (
@@ -63,9 +62,7 @@ export default function RequireAuth({ permissions = [DASHBOARD_ACCESS], children
             You’re signed in as <strong className="text-foreground">{session.data.user.email}</strong>, which doesn’t have
             dashboard access. Ask an administrator if you think this is a mistake.
           </p>
-          <Button variant="secondary" className="mt-6" loading={logout.isPending} onClick={() => logout.mutate()}>
-            Sign in with another account
-          </Button>
+          <SignOutButton size="md" className="mt-6" label="Sign in with another account" />
         </div>
       </FullScreen>
     );
