@@ -102,6 +102,10 @@
       "learners": "Learners",
       "instructors": "Instructors",
       "loading": "Loading platform counts"
+    },
+    "next": {
+      "title": "Coming next",
+      "body": "Learning analytics, revenue and enrolment trends appear here once courses and enrolments are live."
     }
   },
   "settings": {
