@@ -27,7 +27,8 @@
     "collapse": "Collapse sidebar",
     "expand": "Expand sidebar",
     "openMenu": "Open navigation",
-    "closeMenu": "Close navigation"
+    "closeMenu": "Close navigation",
+    "categories": "Categories"
   },
   "search": {
     "open": "Search or jump to…",
@@ -174,7 +175,9 @@
   "validation": {
     "emailRequired": "Enter your email.",
     "emailInvalid": "Enter a valid email address.",
-    "passwordRequired": "Enter your password."
+    "passwordRequired": "Enter your password.",
+    "slug": "Use lower-case letters, numbers and single dashes.",
+    "slugShort": "At least 2 characters."
   },
   "password": {
     "show": "Show password",
@@ -206,5 +209,32 @@
     "notFoundBody": "This page doesn’t exist.",
     "crashTitle": "Something went wrong",
     "crashBody": "An unexpected error interrupted this page. Reloading usually helps."
+  },
+  "categories": {
+    "title": "Course categories",
+    "subtitle": "Organise what learners can browse. Only published categories appear on the website.",
+    "new": "New category",
+    "loading": "Loading categories",
+    "empty": {
+      "title": "No categories yet",
+      "body": "Create the first category. Drafts stay hidden until you publish them."
+    },
+    "status": {
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "actions": {
+      "publish": "Publish",
+      "unpublish": "Unpublish"
+    },
+    "form": {
+      "slug": "Link name",
+      "slugHint": "Lower-case letters, numbers and dashes.",
+      "nameEn": "Name (English)",
+      "nameAr": "Name (Arabic)",
+      "isPublished": "Visibility",
+      "publishNow": "Publish immediately",
+      "submit": "Create category"
+    }
   }
 }

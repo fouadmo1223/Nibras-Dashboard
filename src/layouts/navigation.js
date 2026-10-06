@@ -1,4 +1,4 @@
-import { LayoutDashboard, Settings } from 'lucide-react';
+import { FolderTree, LayoutDashboard, Settings } from 'lucide-react';
 
 /**
  * Sidebar / command-palette navigation. Admin modules add their entries here as they
@@ -6,7 +6,13 @@ import { LayoutDashboard, Settings } from 'lucide-react';
  * `permission` hides an entry from users without it (cosmetic; the API enforces access).
  */
 export const NAV_GROUPS = [
-  { key: 'workspace', items: [{ key: 'overview', to: '/', icon: LayoutDashboard, end: true }] },
+  {
+    key: 'workspace',
+    items: [
+      { key: 'overview', to: '/', icon: LayoutDashboard, end: true },
+      { key: 'categories', to: '/categories', icon: FolderTree, permission: 'categories.manage' },
+    ],
+  },
   { key: 'system', items: [{ key: 'settings', to: '/settings', icon: Settings }] },
 ];
 

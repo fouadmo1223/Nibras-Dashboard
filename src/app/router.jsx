@@ -32,6 +32,7 @@ export const routes = [
         lazy: loadShell,
         children: [
           { index: true, lazy: page(() => import('@/pages/OverviewPage')), handle: { crumb: 'nav.overview' } },
+          { path: 'categories', lazy: page(() => import('@/pages/CategoriesPage')), handle: { crumb: 'nav.categories' } },
           { path: 'settings', lazy: page(() => import('@/pages/SettingsPage')), handle: { crumb: 'nav.settings' } },
           { path: '*', element: <NotFoundPage /> },
         ],
