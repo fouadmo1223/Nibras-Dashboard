@@ -1,10 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import { Activity, ShieldCheck } from 'lucide-react';
+import { Activity, ShieldCheck, Users } from 'lucide-react';
 import { motion } from 'motion/react';
 import { useCurrentUser } from '@/features/auth/current-user';
 import { useI18n } from '@/i18n/I18nProvider';
+import { errorMessage } from '@/lib/api-errors';
 import { API_URL } from '@/services/api-client';
-import { getApiHealth, systemKeys } from '@/services/system.service';
+import { getApiHealth, getHomeStats, systemKeys } from '@/services/system.service';
 
 function statusOf(query) {
   if (query.isPending) return { key: 'checking', tone: 'bg-foreground-subtle', text: 'text-foreground-muted' };
@@ -24,12 +25,17 @@ const item = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transiti
  * revenue and growth analytics join here as their modules ship.
  */
 export default function OverviewPage() {
-  const { t } = useI18n();
+  const { t, format } = useI18n();
   const user = useCurrentUser();
   const health = useQuery({
     queryKey: systemKeys.health(),
     queryFn: ({ signal }) => getApiHealth({ signal }),
     refetchInterval: 30_000,
+  });
+  const platform = useQuery({
+    queryKey: systemKeys.homeStats(),
+    queryFn: ({ signal }) => getHomeStats({ signal }),
+    staleTime: 60_000,
   });
   const status = statusOf(health);
   // A 503 still reports database/version in the error details.
@@ -43,7 +49,7 @@ export default function OverviewPage() {
         <p className="mt-2 max-w-2xl text-foreground-muted">{t('overview.subtitle')}</p>
       </motion.div>
 
-      <div className="mt-8 grid gap-6 lg:grid-cols-[1.4fr_1fr]">
+      <div className="mt-8 grid gap-6 lg:grid-cols-2">
         <motion.section variants={item} aria-labelledby="api-heading" className="rounded-2xl border border-border bg-surface p-6 shadow-elevation-1">
           <div className="flex items-center justify-between gap-4">
             <h2 id="api-heading" className="flex items-center gap-2.5 text-sm font-medium text-foreground">
@@ -83,6 +89,29 @@ export default function OverviewPage() {
               <dd className="mt-0.5 font-mono text-foreground">{info?.version ?? '—'}</dd>
             </div>
           </dl>
+        </motion.section>
+
+        <motion.section variants={item} aria-labelledby="platform-heading" className="rounded-2xl border border-border bg-surface p-6 shadow-elevation-1 lg:col-span-2">
+          <h2 id="platform-heading" className="flex items-center gap-2.5 text-sm font-medium text-foreground">
+            <span className="grid size-8 place-items-center rounded-lg bg-primary-soft text-primary">
+              <Users className="size-4" aria-hidden="true" />
+            </span>
+            {t('overview.platform.title')}
+          </h2>
+          <dl className="mt-6 grid gap-6 sm:grid-cols-2">
+            {[
+              ['learners', platform.data?.learners],
+              ['instructors', platform.data?.instructors],
+            ].map(([key, value]) => (
+              <div key={key}>
+                <dt className="text-sm text-foreground-subtle">{t(`overview.platform.${key}`)}</dt>
+                <dd className="mt-1 text-3xl font-semibold tabular-nums text-foreground">
+                  {platform.isPending ? <span className="inline-block h-8 w-16 animate-pulse rounded bg-surface-muted" aria-label={t('overview.platform.loading')} /> : format.number(value ?? 0)}
+                </dd>
+              </div>
+            ))}
+          </dl>
+          {platform.isError ? <p className="mt-4 text-sm text-error">{errorMessage(platform.error, t)}</p> : null}
         </motion.section>
 
         <motion.section variants={item} aria-labelledby="access-heading" className="rounded-2xl border border-border bg-surface p-6 shadow-elevation-1">

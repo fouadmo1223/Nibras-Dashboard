@@ -100,6 +100,12 @@
         "many": "{count} صلاحية",
         "other": "{count} صلاحية"
       }
+    },
+    "platform": {
+      "title": "المنصّة",
+      "learners": "المتعلّمون",
+      "instructors": "المدرّبون",
+      "loading": "جارٍ تحميل الأرقام"
     }
   },
   "settings": {

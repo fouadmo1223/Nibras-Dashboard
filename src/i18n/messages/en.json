@@ -96,6 +96,12 @@
         "one": "{count} permission",
         "other": "{count} permissions"
       }
+    },
+    "platform": {
+      "title": "Platform",
+      "learners": "Learners",
+      "instructors": "Instructors",
+      "loading": "Loading platform counts"
     }
   },
   "settings": {
