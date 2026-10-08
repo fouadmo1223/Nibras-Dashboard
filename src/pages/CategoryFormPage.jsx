@@ -1,9 +1,9 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { FolderTree } from 'lucide-react';
+import { FolderTree, Upload } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -11,7 +11,7 @@ import Field from '@/components/ui/Field';
 import Input from '@/components/ui/Input';
 import { useI18n } from '@/i18n/I18nProvider';
 import { applyFieldErrors, errorMessage } from '@/lib/api-errors';
-import { categoryKeys, createCategory, getCategory, updateCategory } from '@/services/categories.service';
+import { categoryKeys, createCategory, getCategory, updateCategory, uploadCategoryImage } from '@/services/categories.service';
 import { toast } from '@/stores/toast-store';
 import { categorySchema } from './category-schema';
 
@@ -26,16 +26,22 @@ export default function CategoryFormPage() {
 
   const detail = useQuery({ queryKey: categoryKeys.detail(id), queryFn: () => getCategory(id), enabled: editing });
 
+  const fileInputRef = useRef(null);
+
   const {
     register,
     handleSubmit,
     reset,
+    setValue,
+    watch,
     setError,
     formState: { errors, isDirty },
   } = useForm({
     resolver: zodResolver(schema),
     defaultValues: { slug: '', nameEn: '', nameAr: '', descriptionEn: '', descriptionAr: '', imageUrl: '', isPublished: false },
   });
+
+  const imageUrl = watch('imageUrl');
 
   useEffect(() => {
     if (detail.data) {
@@ -67,6 +73,22 @@ export default function CategoryFormPage() {
       else applyFieldErrors(error, setError, ['slug', 'nameEn', 'nameAr', 'descriptionEn', 'descriptionAr', 'imageUrl']);
     },
   });
+
+  const upload = useMutation({
+    mutationFn: (file) => uploadCategoryImage(id, file),
+    onSuccess: (result) => {
+      toast.success(result.message);
+      setValue('imageUrl', result.data.imageUrl, { shouldDirty: false });
+      refresh();
+    },
+    onError: (error) => toast.error(errorMessage(error, t)),
+  });
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (file) upload.mutate(file);
+  };
 
   if (editing && detail.isPending) {
     return (
@@ -142,8 +164,39 @@ export default function CategoryFormPage() {
           />
         </Field>
 
-        <Field label={t('categories.form.imageUrl')} error={errors.imageUrl?.message} hint={t('categories.form.imageUrlHint')} className="md:col-span-2">
-          <Input dir="ltr" placeholder="https://…" {...register('imageUrl')} />
+        <Field
+          label={t('categories.form.imageUrl')}
+          error={errors.imageUrl?.message}
+          hint={editing ? t('categories.form.imageUrlHint') : t('categories.form.imageUploadHintNew')}
+          className="md:col-span-2"
+        >
+          <div className="flex flex-wrap items-start gap-4">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt=""
+                className="h-16 w-28 shrink-0 rounded-lg border border-border object-cover"
+              />
+            ) : null}
+            <div className="min-w-0 flex-1 space-y-2">
+              <Input dir="ltr" placeholder="https://…" {...register('imageUrl')} />
+              {editing ? (
+                <>
+                  <input
+                    ref={fileInputRef}
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"
+                    className="sr-only"
+                    onChange={handleFileChange}
+                  />
+                  <Button type="button" variant="secondary" loading={upload.isPending} onClick={() => fileInputRef.current?.click()}>
+                    <Upload className="size-4" aria-hidden="true" />
+                    {t('categories.form.uploadImage')}
+                  </Button>
+                </>
+              ) : null}
+            </div>
+          </div>
         </Field>
 
         <div className="flex justify-end gap-3 md:col-span-2">
