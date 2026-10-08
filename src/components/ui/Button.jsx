@@ -2,8 +2,8 @@ import { Loader2 } from 'lucide-react';
 import { cn } from '@/lib/cn';
 
 const VARIANTS = {
-  primary: 'bg-primary text-primary-foreground hover:bg-primary-hover shadow-elevation-1',
-  secondary: 'border border-border-strong bg-surface text-foreground hover:bg-surface-muted',
+  primary: 'bg-primary text-primary-foreground shadow-elevation-1 hover:scale-[1.02] hover:bg-primary-hover hover:shadow-elevation-2',
+  secondary: 'border border-border-strong bg-surface text-foreground hover:scale-[1.02] hover:bg-surface-muted',
   ghost: 'text-foreground-muted hover:bg-surface-muted hover:text-foreground',
   danger: 'border border-error/30 bg-error-soft text-error hover:bg-error hover:text-white',
 };
@@ -32,7 +32,7 @@ export default function Button({
       disabled={disabled || loading}
       aria-busy={loading || undefined}
       className={cn(
-        'inline-flex select-none items-center justify-center font-medium transition-[background-color,color,box-shadow,transform] duration-150 ease-standard active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55',
+        'inline-flex select-none items-center justify-center font-medium transition-[background-color,color,box-shadow,transform] duration-200 ease-standard active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55 disabled:hover:scale-100',
         VARIANTS[variant],
         SIZES[size],
         className,

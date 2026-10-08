@@ -32,15 +32,17 @@ export function SidebarNav({ compact = false, onNavigate }) {
                   title={compact ? t(`nav.${key}`) : undefined}
                   className={({ isActive }) =>
                     cn(
-                      'group relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-colors',
+                      'group relative flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium transition-all duration-200',
                       compact && 'justify-center px-0',
-                      isActive ? 'bg-primary-soft text-primary' : 'text-foreground-muted hover:bg-surface-muted hover:text-foreground',
+                      isActive
+                        ? 'bg-primary-soft text-primary shadow-elevation-1'
+                        : 'text-foreground-muted hover:translate-x-0.5 hover:bg-surface-muted hover:text-foreground rtl:hover:-translate-x-0.5',
                     )
                   }
                 >
                   {({ isActive }) => (
                     <>
-                      {isActive && <span aria-hidden="true" className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-primary" />}
+                      {isActive && <span aria-hidden="true" className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-gradient-to-b from-primary to-secondary" />}
                       <Icon className="size-[1.125rem] shrink-0" aria-hidden="true" />
                       <span className={cn('truncate', compact && 'sr-only')}>{t(`nav.${key}`)}</span>
                     </>
@@ -61,10 +63,11 @@ export default function Sidebar({ compact, onToggle }) {
   return (
     <aside
       className={cn(
-        'fixed inset-y-0 start-0 z-30 hidden flex-col border-e border-border bg-surface transition-[width] duration-300 ease-emphasized lg:flex',
+        'fixed inset-y-0 start-0 z-30 hidden flex-col overflow-hidden border-e border-border bg-surface transition-[width] duration-300 ease-emphasized lg:flex',
         compact ? 'w-[4.5rem]' : 'w-64',
       )}
     >
+      <div aria-hidden="true" className="pointer-events-none absolute -top-16 start-1/2 -z-10 size-64 -translate-x-1/2 rounded-full bg-[radial-gradient(closest-side,color-mix(in_oklab,var(--secondary)_16%,transparent),transparent)] blur-2xl" />
       <div className={cn('flex h-16 shrink-0 items-center border-b border-border', compact ? 'justify-center' : 'px-5')}>
         {compact ? <LogoMark className="size-8" /> : <Logo label={t('common.admin')} lang={locale} />}
       </div>

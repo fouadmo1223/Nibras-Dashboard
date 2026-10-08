@@ -6,6 +6,7 @@ import { motion } from 'motion/react';
 import { FolderTree, Globe, Plus } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
+import Card from '@/components/ui/Card';
 import Field from '@/components/ui/Field';
 import Input from '@/components/ui/Input';
 import { useI18n } from '@/i18n/I18nProvider';
@@ -110,7 +111,7 @@ export default function CategoriesPage() {
         </motion.form>
       ) : null}
 
-      <section aria-labelledby="categories-list" className="mt-8 overflow-hidden rounded-2xl border border-border bg-surface shadow-elevation-1">
+      <Card as="section" aria-labelledby="categories-list" className="mt-8 overflow-hidden">
         <h2 id="categories-list" className="sr-only">
           {t('categories.title')}
         </h2>
@@ -126,7 +127,7 @@ export default function CategoriesPage() {
           </div>
         ) : rows.length === 0 ? (
           <div className="flex flex-col items-center px-6 py-16 text-center">
-            <span className="grid size-12 place-items-center rounded-xl bg-primary-soft text-primary">
+            <span className="grid size-12 place-items-center rounded-xl bg-primary-soft text-primary ring-8 ring-primary-soft/40">
               <FolderTree className="size-6" aria-hidden="true" />
             </span>
             <p className="mt-4 font-medium text-foreground">{t('categories.empty.title')}</p>
@@ -134,8 +135,14 @@ export default function CategoriesPage() {
           </div>
         ) : (
           <ul className="divide-y divide-border">
-            {rows.map((c) => (
-              <li key={c.id} className="flex flex-wrap items-center gap-4 px-6 py-4">
+            {rows.map((c, i) => (
+              <motion.li
+                key={c.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: i * 0.04 }}
+                className="flex flex-wrap items-center gap-4 px-6 py-4 transition-colors duration-200 hover:bg-surface-muted"
+              >
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">{c.nameEn}</p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-sm text-foreground-subtle">
@@ -162,11 +169,11 @@ export default function CategoriesPage() {
                 >
                   {c.isPublished ? t('categories.actions.unpublish') : t('categories.actions.publish')}
                 </Button>
-              </li>
+              </motion.li>
             ))}
           </ul>
         )}
-      </section>
+      </Card>
     </div>
   );
 }
