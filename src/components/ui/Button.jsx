@@ -14,7 +14,9 @@ const SIZES = {
   lg: 'h-12 gap-2 rounded-lg px-5 text-base',
 };
 
+/** `as` lets this render as a Link/anchor for navigation buttons; `type`/`disabled` only apply to a real `<button>`. */
 export default function Button({
+  as: Tag = 'button',
   variant = 'primary',
   size = 'md',
   loading = false,
@@ -25,12 +27,11 @@ export default function Button({
   ref,
   ...props
 }) {
+  const isButton = Tag === 'button';
   return (
-    <button
+    <Tag
       ref={ref}
-      type={type}
-      disabled={disabled || loading}
-      aria-busy={loading || undefined}
+      {...(isButton ? { type, disabled: disabled || loading, 'aria-busy': loading || undefined } : {})}
       className={cn(
         'inline-flex select-none items-center justify-center font-medium transition-[background-color,color,box-shadow,transform] duration-200 ease-standard active:scale-[0.98] disabled:pointer-events-none disabled:opacity-55 disabled:hover:scale-100',
         VARIANTS[variant],
@@ -41,6 +42,6 @@ export default function Button({
     >
       {loading && <Loader2 className="size-4 animate-spin" aria-hidden="true" />}
       {children}
-    </button>
+    </Tag>
   );
 }

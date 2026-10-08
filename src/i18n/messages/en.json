@@ -216,6 +216,7 @@
     "title": "Course categories",
     "subtitle": "Organise what learners can browse. Only published categories appear on the website.",
     "new": "New category",
+    "edit": "Edit category",
     "loading": "Loading categories",
     "empty": {
       "title": "No categories yet",
@@ -232,13 +233,17 @@
     "form": {
       "slug": "Link name",
       "slugHint": "Lower-case letters, numbers and dashes.",
+      "slugLocked": "The link name can't be changed after a category is created.",
       "nameEn": "Name (English)",
       "nameAr": "Name (Arabic)",
+      "descriptionEn": "Description (English)",
+      "descriptionAr": "Description (Arabic)",
       "imageUrl": "Cover image",
       "imageUrlHint": "A direct image URL. Shown on the category card.",
       "isPublished": "Visibility",
       "publishNow": "Publish immediately",
-      "submit": "Create category"
+      "submit": "Create category",
+      "save": "Save changes"
     }
   },
   "instructors": {
@@ -246,6 +251,7 @@
     "subtitle": "Grant the instructor role and manage what appears on each instructor's public profile.",
     "summary": "{count} instructors · {published} published",
     "new": "Add instructor",
+    "edit": "Edit instructor",
     "loading": "Loading instructors",
     "empty": {
       "title": "No instructors yet",

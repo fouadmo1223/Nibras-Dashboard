@@ -32,8 +32,24 @@ export const routes = [
         lazy: loadShell,
         children: [
           { index: true, lazy: page(() => import('@/pages/OverviewPage')), handle: { crumb: 'nav.overview' } },
-          { path: 'categories', lazy: page(() => import('@/pages/CategoriesPage')), handle: { crumb: 'nav.categories' } },
-          { path: 'instructors', lazy: page(() => import('@/pages/InstructorsPage')), handle: { crumb: 'nav.instructors' } },
+          {
+            path: 'categories',
+            handle: { crumb: 'nav.categories' },
+            children: [
+              { index: true, lazy: page(() => import('@/pages/CategoriesPage')) },
+              { path: 'new', lazy: page(() => import('@/pages/CategoryFormPage')), handle: { crumb: 'categories.new' } },
+              { path: ':id', lazy: page(() => import('@/pages/CategoryFormPage')), handle: { crumb: 'categories.edit' } },
+            ],
+          },
+          {
+            path: 'instructors',
+            handle: { crumb: 'nav.instructors' },
+            children: [
+              { index: true, lazy: page(() => import('@/pages/InstructorsPage')) },
+              { path: 'new', lazy: page(() => import('@/pages/InstructorFormPage')), handle: { crumb: 'instructors.new' } },
+              { path: ':id', lazy: page(() => import('@/pages/InstructorFormPage')), handle: { crumb: 'instructors.edit' } },
+            ],
+          },
           { path: 'settings', lazy: page(() => import('@/pages/SettingsPage')), handle: { crumb: 'nav.settings' } },
           { path: '*', element: <NotFoundPage /> },
         ],
