@@ -28,7 +28,8 @@
     "expand": "Expand sidebar",
     "openMenu": "Open navigation",
     "closeMenu": "Close navigation",
-    "categories": "Categories"
+    "categories": "Categories",
+    "instructors": "Instructors"
   },
   "search": {
     "open": "Search or jump to…",
@@ -177,7 +178,8 @@
     "emailInvalid": "Enter a valid email address.",
     "passwordRequired": "Enter your password.",
     "slug": "Use lower-case letters, numbers and single dashes.",
-    "slugShort": "At least 2 characters."
+    "slugShort": "At least 2 characters.",
+    "url": "Enter a valid web address."
   },
   "password": {
     "show": "Show password",
@@ -235,6 +237,37 @@
       "isPublished": "Visibility",
       "publishNow": "Publish immediately",
       "submit": "Create category"
+    }
+  },
+  "instructors": {
+    "title": "Instructors",
+    "subtitle": "Grant the instructor role and manage what appears on each instructor's public profile.",
+    "new": "Add instructor",
+    "loading": "Loading instructors",
+    "empty": {
+      "title": "No instructors yet",
+      "body": "Add an existing account as an instructor by email."
+    },
+    "status": {
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "actions": {
+      "publish": "Publish",
+      "unpublish": "Unpublish"
+    },
+    "form": {
+      "email": "Email",
+      "emailHint": "The person must already have a Nibras account.",
+      "addSubmit": "Add instructor",
+      "headlineEn": "Headline (English)",
+      "headlineAr": "Headline (Arabic)",
+      "bioEn": "Bio (English)",
+      "bioAr": "Bio (Arabic)",
+      "website": "Website",
+      "linkedin": "LinkedIn",
+      "x": "X (Twitter)",
+      "submit": "Save changes"
     }
   }
 }

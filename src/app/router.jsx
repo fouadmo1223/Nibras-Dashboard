@@ -33,6 +33,7 @@ export const routes = [
         children: [
           { index: true, lazy: page(() => import('@/pages/OverviewPage')), handle: { crumb: 'nav.overview' } },
           { path: 'categories', lazy: page(() => import('@/pages/CategoriesPage')), handle: { crumb: 'nav.categories' } },
+          { path: 'instructors', lazy: page(() => import('@/pages/InstructorsPage')), handle: { crumb: 'nav.instructors' } },
           { path: 'settings', lazy: page(() => import('@/pages/SettingsPage')), handle: { crumb: 'nav.settings' } },
           { path: '*', element: <NotFoundPage /> },
         ],

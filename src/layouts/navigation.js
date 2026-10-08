@@ -1,4 +1,4 @@
-import { FolderTree, LayoutDashboard, Settings } from 'lucide-react';
+import { FolderTree, GraduationCap, LayoutDashboard, Settings } from 'lucide-react';
 
 /**
  * Sidebar / command-palette navigation. Admin modules add their entries here as they
@@ -11,6 +11,7 @@ export const NAV_GROUPS = [
     items: [
       { key: 'overview', to: '/', icon: LayoutDashboard, end: true },
       { key: 'categories', to: '/categories', icon: FolderTree, permission: 'categories.manage' },
+      { key: 'instructors', to: '/instructors', icon: GraduationCap, permission: 'instructors.manage' },
     ],
   },
   { key: 'system', items: [{ key: 'settings', to: '/settings', icon: Settings }] },
