@@ -16,6 +16,9 @@ import { addInstructor, instructorKeys, listInstructors, updateInstructor } from
 import { toast } from '@/stores/toast-store';
 import { addInstructorSchema, instructorProfileSchema } from './instructor-schema';
 
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } };
+const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 28 } } };
+
 /** Collapsed row header: avatar, name/email, status, and an expand toggle. */
 function RowHeader({ profile, open, onToggle, t }) {
   return (
@@ -25,7 +28,7 @@ function RowHeader({ profile, open, onToggle, t }) {
       aria-expanded={open}
       className="flex w-full flex-wrap items-center gap-4 px-6 py-4 text-start transition-colors hover:bg-surface-muted"
     >
-      <Avatar user={profile.user} size="sm" />
+      <Avatar user={profile.user} size="md" />
       <div className="min-w-0 flex-1">
         <p className="font-medium text-foreground">{profile.user.name}</p>
         <p className="truncate text-sm text-foreground-subtle">{profile.user.email}</p>
@@ -170,19 +173,30 @@ export default function InstructorsPage() {
   });
 
   const rows = instructors.data ?? [];
+  const publishedCount = rows.filter((r) => r.isPublished).length;
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <header className="flex flex-wrap items-end justify-between gap-4">
+    <motion.div variants={container} initial="hidden" animate="show" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <motion.header variants={item} className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t('instructors.title')}</h1>
+          <div className="flex items-center gap-3">
+            <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
+              <GraduationCap className="size-5" aria-hidden="true" />
+            </span>
+            <h1 className="text-3xl font-semibold tracking-tight text-foreground">{t('instructors.title')}</h1>
+          </div>
           <p className="mt-2 max-w-2xl text-foreground-muted">{t('instructors.subtitle')}</p>
+          {!instructors.isPending && !instructors.isError && rows.length > 0 ? (
+            <p className="mt-2 text-sm text-foreground-subtle">
+              {t('instructors.summary', { count: rows.length, published: publishedCount })}
+            </p>
+          ) : null}
         </div>
         <Button onClick={() => setAddOpen((v) => !v)} aria-expanded={addOpen}>
           <Plus className="size-4" aria-hidden="true" />
           {t('instructors.new')}
         </Button>
-      </header>
+      </motion.header>
 
       {addOpen ? (
         <motion.form
@@ -190,26 +204,38 @@ export default function InstructorsPage() {
           animate={{ opacity: 1, y: 0 }}
           onSubmit={handleSubmit((values) => add.mutate(values))}
           noValidate
-          className="mt-6 flex flex-wrap items-end gap-4 rounded-2xl border border-border bg-surface p-6 shadow-elevation-1"
+          className="mt-6 rounded-2xl border border-border bg-surface p-6 shadow-elevation-1"
         >
-          {add.isError && !['USER_NOT_FOUND', 'ALREADY_INSTRUCTOR', 'VALIDATION_ERROR'].includes(add.error.code) ? (
-            <div className="w-full">
-              <Alert tone="error" title={errorMessage(add.error, t)} />
-            </div>
-          ) : null}
-          <div className="min-w-64 flex-1">
-            <Field label={t('instructors.form.email')} error={errors.email?.message} hint={t('instructors.form.emailHint')}>
-              <Input dir="ltr" type="email" placeholder="layla@example.com" {...register('email')} />
-            </Field>
+          <div className="flex items-center gap-3">
+            <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
+              <UserPlus className="size-4.5" aria-hidden="true" />
+            </span>
+            <h2 className="text-sm font-semibold text-foreground">{t('instructors.new')}</h2>
           </div>
-          <Button type="submit" loading={add.isPending}>
-            <UserPlus className="size-4" aria-hidden="true" />
-            {t('instructors.form.addSubmit')}
-          </Button>
+          <div className="mt-4 flex flex-wrap items-center gap-4">
+            {add.isError && !['USER_NOT_FOUND', 'ALREADY_INSTRUCTOR', 'VALIDATION_ERROR'].includes(add.error.code) ? (
+              <div className="w-full">
+                <Alert tone="error" title={errorMessage(add.error, t)} />
+              </div>
+            ) : null}
+            <div className="min-w-64 flex-1">
+              <Field label={t('instructors.form.email')} error={errors.email?.message} hint={t('instructors.form.emailHint')}>
+                <Input dir="ltr" type="email" placeholder="layla@example.com" {...register('email')} />
+              </Field>
+            </div>
+            <Button type="submit" loading={add.isPending}>
+              <UserPlus className="size-4" aria-hidden="true" />
+              {t('instructors.form.addSubmit')}
+            </Button>
+          </div>
         </motion.form>
       ) : null}
 
-      <section aria-labelledby="instructors-list" className="mt-8 overflow-hidden rounded-2xl border border-border bg-surface shadow-elevation-1">
+      <motion.section
+        variants={item}
+        aria-labelledby="instructors-list"
+        className="mt-8 overflow-hidden rounded-2xl border border-border bg-surface shadow-elevation-1"
+      >
         <h2 id="instructors-list" className="sr-only">
           {t('instructors.title')}
         </h2>
@@ -224,12 +250,16 @@ export default function InstructorsPage() {
             <Alert tone="error" title={errorMessage(instructors.error, t)} />
           </div>
         ) : rows.length === 0 ? (
-          <div className="flex flex-col items-center px-6 py-16 text-center">
-            <span className="grid size-12 place-items-center rounded-xl bg-primary-soft text-primary">
-              <GraduationCap className="size-6" aria-hidden="true" />
+          <div className="flex flex-col items-center px-6 py-20 text-center">
+            <span className="grid size-16 place-items-center rounded-2xl bg-primary-soft text-primary ring-8 ring-primary-soft/40">
+              <GraduationCap className="size-7" aria-hidden="true" />
             </span>
-            <p className="mt-4 font-medium text-foreground">{t('instructors.empty.title')}</p>
-            <p className="mt-1 max-w-sm text-sm text-foreground-muted">{t('instructors.empty.body')}</p>
+            <p className="mt-5 text-base font-medium text-foreground">{t('instructors.empty.title')}</p>
+            <p className="mt-1.5 max-w-sm text-sm text-foreground-muted">{t('instructors.empty.body')}</p>
+            <Button className="mt-6" onClick={() => setAddOpen(true)}>
+              <Plus className="size-4" aria-hidden="true" />
+              {t('instructors.new')}
+            </Button>
           </div>
         ) : (
           <ul className="divide-y divide-border">
@@ -244,7 +274,7 @@ export default function InstructorsPage() {
             })}
           </ul>
         )}
-      </section>
-    </div>
+      </motion.section>
+    </motion.div>
   );
 }

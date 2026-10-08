@@ -2,10 +2,10 @@ import { Navigate, useLocation } from 'react-router';
 import { ShieldAlert } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Avatar from '@/components/ui/Avatar';
-import Logo from '@/components/ui/Logo';
 import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { CurrentUserContext } from './current-user';
+import SessionLoading from './SessionLoading';
 import SignOutButton from './SignOutButton';
 import { DASHBOARD_ACCESS, useSession } from './use-auth';
 
@@ -23,16 +23,7 @@ export default function RequireAuth({ permissions = [DASHBOARD_ACCESS], children
   const session = useSession();
 
   if (session.isPending) {
-    return (
-      <FullScreen>
-        <div className="flex flex-col items-center gap-4" aria-busy="true" aria-label={t('auth.checking')}>
-          <Logo label={t('common.admin')} lang={locale} />
-          <div className="h-1 w-40 overflow-hidden rounded-full bg-surface-muted">
-            <div className="h-full w-1/3 animate-pulse rounded-full bg-primary" />
-          </div>
-        </div>
-      </FullScreen>
-    );
+    return <SessionLoading label={t('auth.checking')} brandLabel={t('common.admin')} locale={locale} />;
   }
 
   if (session.isError) {

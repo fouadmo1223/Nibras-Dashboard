@@ -242,6 +242,7 @@
   "instructors": {
     "title": "Instructors",
     "subtitle": "Grant the instructor role and manage what appears on each instructor's public profile.",
+    "summary": "{count} instructors · {published} published",
     "new": "Add instructor",
     "loading": "Loading instructors",
     "empty": {
