@@ -29,7 +29,8 @@
     "openMenu": "Open navigation",
     "closeMenu": "Close navigation",
     "categories": "Categories",
-    "instructors": "Instructors"
+    "instructors": "Instructors",
+    "courses": "Courses"
   },
   "search": {
     "open": "Search or jump to…",
@@ -179,7 +180,10 @@
     "passwordRequired": "Enter your password.",
     "slug": "Use lower-case letters, numbers and single dashes.",
     "slugShort": "At least 2 characters.",
-    "url": "Enter a valid web address."
+    "url": "Enter a valid web address.",
+    "nameRequired": "At least 2 characters.",
+    "required": "This field is required.",
+    "priceInvalid": "Enter a price of 0 or more."
   },
   "password": {
     "show": "Show password",
@@ -279,6 +283,56 @@
       "linkedin": "LinkedIn",
       "x": "X (Twitter)",
       "submit": "Save changes"
+    }
+  },
+  "courses": {
+    "title": "Courses",
+    "subtitle": "Manage the course catalog. Only published courses appear on the website.",
+    "new": "New course",
+    "edit": "Edit course",
+    "loading": "Loading courses",
+    "free": "Free",
+    "empty": {
+      "title": "No courses yet",
+      "body": "Create the first course. Drafts stay hidden until you publish them."
+    },
+    "status": {
+      "published": "Published",
+      "draft": "Draft"
+    },
+    "actions": {
+      "publish": "Publish",
+      "unpublish": "Unpublish"
+    },
+    "level": {
+      "BEGINNER": "Beginner",
+      "INTERMEDIATE": "Intermediate",
+      "ADVANCED": "Advanced"
+    },
+    "form": {
+      "slug": "Link name",
+      "slugHint": "Lower-case letters, numbers and dashes.",
+      "slugLocked": "The link name can't be changed after a course is created.",
+      "titleEn": "Title (English)",
+      "titleAr": "Title (Arabic)",
+      "subtitleEn": "Subtitle (English)",
+      "subtitleAr": "Subtitle (Arabic)",
+      "descriptionEn": "Description (English)",
+      "descriptionAr": "Description (Arabic)",
+      "category": "Category",
+      "instructor": "Instructor",
+      "selectOption": "Select…",
+      "level": "Level",
+      "price": "Price (USD)",
+      "priceHint": "0 for a free course.",
+      "imageUrl": "Cover image",
+      "imageUrlHint": "Upload an image, or paste a direct image URL. Shown on the course card.",
+      "imageUploadHintNew": "Create the course first, then upload a cover image.",
+      "uploadImage": "Upload image",
+      "isPublished": "Visibility",
+      "publishNow": "Publish immediately",
+      "submit": "Create course",
+      "save": "Save changes"
     }
   }
 }
