@@ -55,8 +55,8 @@ function AnalyticsWindow({ still }) {
         <svg viewBox="0 0 240 110" className="h-28 w-full" aria-hidden="true">
           <defs>
             <linearGradient id="nb-area" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stopColor="#6E82FF" stopOpacity="0.45" />
-              <stop offset="1" stopColor="#6E82FF" stopOpacity="0" />
+              <stop offset="0" stopColor="#FBBF24" stopOpacity="0.45" />
+              <stop offset="1" stopColor="#FBBF24" stopOpacity="0" />
             </linearGradient>
           </defs>
           {[25, 55, 85].map((y) => (
@@ -70,7 +70,7 @@ function AnalyticsWindow({ still }) {
           <motion.path
             d="M0 92 C30 80 45 86 70 66 S110 70 130 48 S175 52 195 30 S225 24 240 14"
             fill="none"
-            stroke="#6E82FF"
+            stroke="#FBBF24"
             strokeWidth="2.5"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
@@ -80,7 +80,7 @@ function AnalyticsWindow({ still }) {
           <motion.path
             d="M0 100 C40 96 60 90 90 84 S140 80 170 70 S220 60 240 52"
             fill="none"
-            stroke="#FF7A45"
+            stroke="#F7F7F5"
             strokeWidth="2"
             strokeDasharray="4 5"
             strokeLinecap="round"
@@ -97,7 +97,7 @@ function AnalyticsWindow({ still }) {
             cy="22"
             r="17"
             fill="none"
-            stroke="#FF7A45"
+            stroke="#FBBF24"
             strokeWidth="5"
             strokeLinecap="round"
             initial={{ pathLength: 0 }}
@@ -111,7 +111,7 @@ function AnalyticsWindow({ still }) {
         {bars.map((h, i) => (
           <motion.span
             key={i}
-            className="flex-1 origin-bottom rounded-t-md bg-gradient-to-t from-cobalt-600 to-cobalt-400"
+            className="flex-1 origin-bottom rounded-t-md bg-gradient-to-t from-amber-600 to-amber-400"
             style={{ height: `${h * 100}%` }}
             initial={{ scaleY: 0 }}
             animate={{ scaleY: still ? 1 : [0.25, 1] }}
@@ -158,12 +158,12 @@ function Scene({ animate }) {
       }}
     >
       <motion.div
-        className="absolute -top-28 left-1/4 size-[30rem] rounded-full bg-cobalt-600/35 blur-3xl"
+        className="absolute -top-28 left-1/4 size-[30rem] rounded-full bg-amber-500/25 blur-3xl"
         animate={still ? undefined : { x: [0, 40, -20, 0], y: [0, 25, -15, 0] }}
         transition={{ duration: 20, repeat: Infinity, ease }}
       />
       <motion.div
-        className="absolute -bottom-36 -right-20 size-[26rem] rounded-full bg-ember-500/20 blur-3xl"
+        className="absolute -bottom-36 -right-20 size-[26rem] rounded-full bg-white/10 blur-3xl"
         animate={still ? undefined : { x: [0, -30, 15, 0], y: [0, -25, 10, 0] }}
         transition={{ duration: 16, repeat: Infinity, ease }}
       />
@@ -173,10 +173,10 @@ function Scene({ animate }) {
         <AnalyticsWindow still={still} />
       </Floating>
       <Floating className="left-[7%] top-[12%]" depth={-30} delay={0.5} {...shared}>
-        <Chip icon={BookOpen} label={t('showcase.courses')} tone="bg-cobalt-500/40" />
+        <Chip icon={BookOpen} label={t('showcase.courses')} tone="bg-amber-500/40" />
       </Floating>
       <Floating className="right-[8%] top-[9%]" depth={28} delay={0.7} {...shared}>
-        <Chip icon={Users} label={t('showcase.students')} tone="bg-ember-500/35" />
+        <Chip icon={Users} label={t('showcase.students')} tone="bg-white/20" />
       </Floating>
       <Floating className="left-[8%] bottom-[8%]" depth={-22} delay={0.9} {...shared}>
         <Chip icon={GraduationCap} label={t('showcase.instructors')} tone="bg-emerald-500/35" />
