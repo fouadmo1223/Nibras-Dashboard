@@ -19,19 +19,19 @@ export const brand = {
   },
   "colors": {
     "light": {
-      "page": "#3640EE",
-      "flame": "#FE5A1F",
-      "core": "#FFC9AD"
+      "page": "#171716",
+      "flame": "#D97706",
+      "core": "#FDE68A"
     },
     "dark": {
-      "page": "#6E82FF",
-      "flame": "#FF7A45",
-      "core": "#FFE6D7"
+      "page": "#EEEEEA",
+      "flame": "#FBBF24",
+      "core": "#FEF3C7"
     },
     "onPrimary": {
       "page": "#FFFFFF",
-      "flame": "#FF7A45",
-      "core": "#FFE6D7"
+      "flame": "#FBBF24",
+      "core": "#FEF3C7"
     }
   }
 };

@@ -113,14 +113,14 @@
   --foreground: var(--palette-ink-950);
   --foreground-muted: var(--palette-ink-600);
   --foreground-subtle: var(--palette-ink-500);
-  --primary: var(--palette-cobalt-600);
-  --primary-hover: var(--palette-cobalt-700);
+  --primary: var(--palette-ink-900);
+  --primary-hover: var(--palette-ink-800);
   --primary-foreground: #FFFFFF;
-  --primary-soft: var(--palette-cobalt-50);
-  --secondary: var(--palette-ember-500);
-  --secondary-hover: var(--palette-ember-600);
+  --primary-soft: var(--palette-ink-100);
+  --secondary: var(--palette-amber-400);
+  --secondary-hover: var(--palette-amber-500);
   --secondary-foreground: var(--palette-ink-950);
-  --secondary-soft: var(--palette-ember-50);
+  --secondary-soft: var(--palette-amber-50);
   --success: var(--palette-emerald-700);
   --success-soft: var(--palette-emerald-50);
   --warning: var(--palette-amber-700);
@@ -129,7 +129,7 @@
   --error-soft: var(--palette-rose-50);
   --info: var(--palette-sky-700);
   --info-soft: var(--palette-sky-50);
-  --ring: var(--palette-cobalt-500);
+  --ring: var(--palette-ink-500);
 }
 
 :root[data-theme="dark"] {
@@ -143,14 +143,14 @@
   --foreground: var(--palette-ink-50);
   --foreground-muted: var(--palette-ink-300);
   --foreground-subtle: var(--palette-ink-400);
-  --primary: var(--palette-cobalt-400);
-  --primary-hover: var(--palette-cobalt-300);
+  --primary: var(--palette-ink-100);
+  --primary-hover: var(--palette-ink-200);
   --primary-foreground: var(--palette-ink-950);
-  --primary-soft: var(--palette-cobalt-950);
-  --secondary: var(--palette-ember-400);
-  --secondary-hover: var(--palette-ember-300);
+  --primary-soft: var(--palette-ink-800);
+  --secondary: var(--palette-amber-400);
+  --secondary-hover: var(--palette-amber-300);
   --secondary-foreground: var(--palette-ink-950);
-  --secondary-soft: var(--palette-ember-950);
+  --secondary-soft: var(--palette-amber-950);
   --success: var(--palette-emerald-500);
   --success-soft: var(--palette-emerald-900);
   --warning: var(--palette-amber-500);
@@ -159,7 +159,7 @@
   --error-soft: var(--palette-rose-900);
   --info: var(--palette-sky-500);
   --info-soft: var(--palette-sky-900);
-  --ring: var(--palette-cobalt-400);
+  --ring: var(--palette-ink-300);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -174,14 +174,14 @@
     --foreground: var(--palette-ink-50);
     --foreground-muted: var(--palette-ink-300);
     --foreground-subtle: var(--palette-ink-400);
-    --primary: var(--palette-cobalt-400);
-    --primary-hover: var(--palette-cobalt-300);
+    --primary: var(--palette-ink-100);
+    --primary-hover: var(--palette-ink-200);
     --primary-foreground: var(--palette-ink-950);
-    --primary-soft: var(--palette-cobalt-950);
-    --secondary: var(--palette-ember-400);
-    --secondary-hover: var(--palette-ember-300);
+    --primary-soft: var(--palette-ink-800);
+    --secondary: var(--palette-amber-400);
+    --secondary-hover: var(--palette-amber-300);
     --secondary-foreground: var(--palette-ink-950);
-    --secondary-soft: var(--palette-ember-950);
+    --secondary-soft: var(--palette-amber-950);
     --success: var(--palette-emerald-500);
     --success-soft: var(--palette-emerald-900);
     --warning: var(--palette-amber-500);
@@ -190,6 +190,30 @@
     --error-soft: var(--palette-rose-900);
     --info: var(--palette-sky-500);
     --info-soft: var(--palette-sky-900);
+    --ring: var(--palette-ink-300);
+  }
+}
+
+:root[data-primary="cobalt"] {
+  --primary: var(--palette-cobalt-600);
+  --primary-hover: var(--palette-cobalt-700);
+  --primary-foreground: #FFFFFF;
+  --primary-soft: var(--palette-cobalt-50);
+  --ring: var(--palette-cobalt-500);
+}
+:root[data-theme="dark"][data-primary="cobalt"] {
+  --primary: var(--palette-cobalt-400);
+  --primary-hover: var(--palette-cobalt-300);
+  --primary-foreground: var(--palette-ink-950);
+  --primary-soft: var(--palette-cobalt-950);
+  --ring: var(--palette-cobalt-400);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"])[data-primary="cobalt"] {
+    --primary: var(--palette-cobalt-400);
+    --primary-hover: var(--palette-cobalt-300);
+    --primary-foreground: var(--palette-ink-950);
+    --primary-soft: var(--palette-cobalt-950);
     --ring: var(--palette-cobalt-400);
   }
 }
@@ -242,48 +266,24 @@
   }
 }
 
-:root[data-primary="graphite"] {
-  --primary: var(--palette-ink-900);
-  --primary-hover: var(--palette-ink-800);
-  --primary-foreground: #FFFFFF;
-  --primary-soft: var(--palette-ink-100);
-  --ring: var(--palette-ink-500);
+:root[data-secondary="ember"] {
+  --secondary: var(--palette-ember-500);
+  --secondary-hover: var(--palette-ember-600);
+  --secondary-foreground: var(--palette-ink-950);
+  --secondary-soft: var(--palette-ember-50);
 }
-:root[data-theme="dark"][data-primary="graphite"] {
-  --primary: var(--palette-ink-100);
-  --primary-hover: var(--palette-ink-200);
-  --primary-foreground: var(--palette-ink-950);
-  --primary-soft: var(--palette-ink-800);
-  --ring: var(--palette-ink-300);
+:root[data-theme="dark"][data-secondary="ember"] {
+  --secondary: var(--palette-ember-400);
+  --secondary-hover: var(--palette-ember-300);
+  --secondary-foreground: var(--palette-ink-950);
+  --secondary-soft: var(--palette-ember-950);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"])[data-primary="graphite"] {
-    --primary: var(--palette-ink-100);
-    --primary-hover: var(--palette-ink-200);
-    --primary-foreground: var(--palette-ink-950);
-    --primary-soft: var(--palette-ink-800);
-    --ring: var(--palette-ink-300);
-  }
-}
-
-:root[data-secondary="amber"] {
-  --secondary: var(--palette-amber-400);
-  --secondary-hover: var(--palette-amber-500);
-  --secondary-foreground: var(--palette-ink-950);
-  --secondary-soft: var(--palette-amber-50);
-}
-:root[data-theme="dark"][data-secondary="amber"] {
-  --secondary: var(--palette-amber-400);
-  --secondary-hover: var(--palette-amber-300);
-  --secondary-foreground: var(--palette-ink-950);
-  --secondary-soft: var(--palette-amber-950);
-}
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"])[data-secondary="amber"] {
-    --secondary: var(--palette-amber-400);
-    --secondary-hover: var(--palette-amber-300);
+  :root:not([data-theme="light"])[data-secondary="ember"] {
+    --secondary: var(--palette-ember-400);
+    --secondary-hover: var(--palette-ember-300);
     --secondary-foreground: var(--palette-ink-950);
-    --secondary-soft: var(--palette-amber-950);
+    --secondary-soft: var(--palette-ember-950);
   }
 }
 

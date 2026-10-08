@@ -117,6 +117,6 @@ describe('AppShell', () => {
     await userEvent.click(within(primary).getByRole('radio', { name: 'Teal' }));
     expect(document.documentElement.dataset.primary).toBe('teal');
     await userEvent.click(screen.getByRole('button', { name: 'Reset to defaults' }));
-    expect(document.documentElement.dataset.primary).toBe('cobalt');
+    expect(document.documentElement.dataset.primary).toBe('graphite');
   });
 });

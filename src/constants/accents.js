@@ -2,6 +2,13 @@
 export const accents = {
   "primary": [
     {
+      "id": "graphite",
+      "swatch": {
+        "light": "#171716",
+        "dark": "#EEEEEA"
+      }
+    },
+    {
       "id": "cobalt",
       "swatch": {
         "light": "#3640EE",
@@ -21,28 +28,21 @@ export const accents = {
         "light": "#0F766E",
         "dark": "#2DD4BF"
       }
-    },
-    {
-      "id": "graphite",
-      "swatch": {
-        "light": "#171716",
-        "dark": "#EEEEEA"
-      }
     }
   ],
   "secondary": [
-    {
-      "id": "ember",
-      "swatch": {
-        "light": "#FE5A1F",
-        "dark": "#FF7A45"
-      }
-    },
     {
       "id": "amber",
       "swatch": {
         "light": "#FBBF24",
         "dark": "#FBBF24"
+      }
+    },
+    {
+      "id": "ember",
+      "swatch": {
+        "light": "#FE5A1F",
+        "dark": "#FF7A45"
       }
     },
     {
