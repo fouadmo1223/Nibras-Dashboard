@@ -10,5 +10,6 @@ export const categorySchema = (t) =>
     nameAr: z.string().trim().min(2, t('validation.nameRequired')).max(120),
     descriptionEn: z.string().trim().max(500).optional(),
     descriptionAr: z.string().trim().max(500).optional(),
+    imageUrl: z.union([z.string().trim().url(t('validation.url')), z.literal('')]).optional(),
     isPublished: z.boolean().optional(),
   });

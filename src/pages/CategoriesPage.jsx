@@ -31,12 +31,12 @@ export default function CategoriesPage() {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(schema),
-    defaultValues: { slug: '', nameEn: '', nameAr: '', descriptionEn: '', descriptionAr: '', isPublished: false },
+    defaultValues: { slug: '', nameEn: '', nameAr: '', descriptionEn: '', descriptionAr: '', imageUrl: '', isPublished: false },
   });
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: categoryKeys.all });
   const create = useMutation({
-    mutationFn: createCategory,
+    mutationFn: (values) => createCategory({ ...values, imageUrl: values.imageUrl || undefined }),
     onSuccess: (result) => {
       toast.success(result.message);
       reset();
@@ -45,7 +45,7 @@ export default function CategoriesPage() {
     },
     onError: (error) => {
       if (error.code === 'SLUG_TAKEN') setError('slug', { type: 'server', message: error.message });
-      else applyFieldErrors(error, setError, ['slug', 'nameEn', 'nameAr', 'descriptionEn', 'descriptionAr']);
+      else applyFieldErrors(error, setError, ['slug', 'nameEn', 'nameAr', 'descriptionEn', 'descriptionAr', 'imageUrl']);
     },
   });
   const publish = useMutation({
@@ -100,6 +100,9 @@ export default function CategoriesPage() {
           <Field label={t('categories.form.nameAr')} error={errors.nameAr?.message}>
             <Input dir="rtl" {...register('nameAr')} />
           </Field>
+          <Field label={t('categories.form.imageUrl')} error={errors.imageUrl?.message} hint={t('categories.form.imageUrlHint')} className="md:col-span-2">
+            <Input dir="ltr" placeholder="https://…" {...register('imageUrl')} />
+          </Field>
           <div className="flex justify-end gap-3 md:col-span-2">
             <Button variant="secondary" onClick={() => setOpen(false)}>
               {t('common.cancel')}
@@ -143,6 +146,13 @@ export default function CategoriesPage() {
                 transition={{ duration: 0.3, delay: i * 0.04 }}
                 className="flex flex-wrap items-center gap-4 px-6 py-4 transition-colors duration-200 hover:bg-surface-muted"
               >
+                {c.imageUrl ? (
+                  <img src={c.imageUrl} alt="" className="size-12 shrink-0 rounded-lg object-cover" />
+                ) : (
+                  <span className="grid size-12 shrink-0 place-items-center rounded-lg bg-surface-muted text-foreground-subtle">
+                    <FolderTree className="size-5" aria-hidden="true" />
+                  </span>
+                )}
                 <div className="min-w-0 flex-1">
                   <p className="font-medium text-foreground">{c.nameEn}</p>
                   <p className="mt-0.5 flex flex-wrap items-center gap-x-3 text-sm text-foreground-subtle">

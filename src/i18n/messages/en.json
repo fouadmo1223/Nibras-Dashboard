@@ -234,6 +234,8 @@
       "slugHint": "Lower-case letters, numbers and dashes.",
       "nameEn": "Name (English)",
       "nameAr": "Name (Arabic)",
+      "imageUrl": "Cover image",
+      "imageUrlHint": "A direct image URL. Shown on the category card.",
       "isPublished": "Visibility",
       "publishNow": "Publish immediately",
       "submit": "Create category"
