@@ -60,8 +60,10 @@ export default function CategoryFormPage() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: categoryKeys.all });
   const save = useMutation({
     mutationFn: (values) => {
-      const body = { ...values, imageUrl: values.imageUrl || undefined };
-      return editing ? updateCategory(id, body) : createCategory(body);
+      const { slug, ...rest } = values;
+      const body = { ...rest, imageUrl: values.imageUrl || undefined };
+      // The slug is immutable after creation — UpdateCategoryDto doesn't accept it at all.
+      return editing ? updateCategory(id, body) : createCategory({ slug, ...body });
     },
     onSuccess: (result) => {
       toast.success(result.message);
@@ -92,7 +94,7 @@ export default function CategoryFormPage() {
 
   if (editing && detail.isPending) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-9 w-48 animate-pulse rounded-md bg-surface-muted" />
         <div className="mt-8 h-96 animate-pulse rounded-2xl bg-surface-muted" />
       </div>
@@ -101,14 +103,14 @@ export default function CategoryFormPage() {
 
   if (editing && detail.isError) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <Alert tone="error" title={errorMessage(detail.error, t)} />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex items-center gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
           <FolderTree className="size-5" aria-hidden="true" />

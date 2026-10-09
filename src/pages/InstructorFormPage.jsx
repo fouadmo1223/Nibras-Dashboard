@@ -205,7 +205,7 @@ export default function InstructorFormPage() {
   const { t } = useI18n();
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex items-center gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
           <GraduationCap className="size-5" aria-hidden="true" />

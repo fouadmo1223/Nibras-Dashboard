@@ -9,7 +9,7 @@ import { cn } from '@/lib/cn';
  * focus to the trigger; clicking outside closes. Items with `selected` render as
  * menuitemradio. `header` renders non-interactive content above the items.
  */
-export default function Menu({ label, triggerClassName, triggerContent, items, header, align = 'end', className, menuClassName }) {
+export default function Menu({ label, triggerClassName, triggerContent, triggerProps, items, header, align = 'end', className, menuClassName }) {
   const [open, setOpen] = useState(false);
   const rootRef = useRef(null);
   const triggerRef = useRef(null);
@@ -84,6 +84,7 @@ export default function Menu({ label, triggerClassName, triggerContent, items, h
         onClick={() => (open ? close(false) : openAt(selectedIndex()))}
         onKeyDown={onTriggerKeyDown}
         className={triggerClassName}
+        {...triggerProps}
       >
         {triggerContent}
       </button>

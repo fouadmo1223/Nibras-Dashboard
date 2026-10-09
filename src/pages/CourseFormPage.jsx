@@ -9,6 +9,7 @@ import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Field from '@/components/ui/Field';
 import Input from '@/components/ui/Input';
+import Select from '@/components/ui/Select';
 import { useI18n } from '@/i18n/I18nProvider';
 import { applyFieldErrors, errorMessage } from '@/lib/api-errors';
 import { categoryKeys, listCategories } from '@/services/categories.service';
@@ -19,8 +20,6 @@ import { COURSE_LEVELS, courseSchema } from './course-schema';
 
 const textareaClass =
   'w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring';
-const selectClass =
-  'h-11 w-full rounded-lg border border-border bg-surface px-3 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring';
 
 /** Create or edit a course (`/courses/new` or `/courses/:id`). */
 export default function CourseFormPage() {
@@ -39,6 +38,7 @@ export default function CourseFormPage() {
 
   const {
     register,
+    control,
     handleSubmit,
     reset,
     setValue,
@@ -89,9 +89,10 @@ export default function CourseFormPage() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: courseKeys.all });
   const save = useMutation({
     mutationFn: (values) => {
-      const { price, ...rest } = values;
+      const { price, slug, ...rest } = values;
       const body = { ...rest, imageUrl: values.imageUrl || undefined, priceCents: Math.round(price * 100) };
-      return editing ? updateCourse(id, body) : createCourse(body);
+      // The slug is immutable after creation — UpdateCourseDto doesn't accept it at all.
+      return editing ? updateCourse(id, body) : createCourse({ slug, ...body });
     },
     onSuccess: (result) => {
       toast.success(result.message);
@@ -126,7 +127,7 @@ export default function CourseFormPage() {
 
   if (editing && (detail.isPending || loadingRefs)) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-9 w-48 animate-pulse rounded-md bg-surface-muted" />
         <div className="mt-8 h-96 animate-pulse rounded-2xl bg-surface-muted" />
       </div>
@@ -135,14 +136,14 @@ export default function CourseFormPage() {
 
   if (editing && detail.isError) {
     return (
-      <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+      <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <Alert tone="error" title={errorMessage(detail.error, t)} />
       </div>
     );
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl px-4 py-8 sm:px-6 lg:px-8">
+    <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
       <div className="flex items-center gap-3">
         <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
           <BookOpen className="size-5" aria-hidden="true" />
@@ -196,34 +197,24 @@ export default function CourseFormPage() {
         </Field>
 
         <Field label={t('courses.form.category')} error={errors.categoryId?.message}>
-          <select className={selectClass} {...register('categoryId')}>
-            <option value="">{t('courses.form.selectOption')}</option>
-            {(categories.data ?? []).map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.nameEn}
-              </option>
-            ))}
-          </select>
+          <Select
+            control={control}
+            name="categoryId"
+            placeholder={t('courses.form.selectOption')}
+            options={(categories.data ?? []).map((c) => ({ value: c.id, label: c.nameEn }))}
+          />
         </Field>
         <Field label={t('courses.form.instructor')} error={errors.instructorId?.message}>
-          <select className={selectClass} {...register('instructorId')}>
-            <option value="">{t('courses.form.selectOption')}</option>
-            {(instructors.data ?? []).map((i) => (
-              <option key={i.id} value={i.id}>
-                {i.user.name}
-              </option>
-            ))}
-          </select>
+          <Select
+            control={control}
+            name="instructorId"
+            placeholder={t('courses.form.selectOption')}
+            options={(instructors.data ?? []).map((i) => ({ value: i.id, label: i.user.name }))}
+          />
         </Field>
 
         <Field label={t('courses.form.level')} error={errors.level?.message}>
-          <select className={selectClass} {...register('level')}>
-            {COURSE_LEVELS.map((level) => (
-              <option key={level} value={level}>
-                {t(`courses.level.${level}`)}
-              </option>
-            ))}
-          </select>
+          <Select control={control} name="level" options={COURSE_LEVELS.map((level) => ({ value: level, label: t(`courses.level.${level}`) }))} />
         </Field>
         <Field label={t('courses.form.price')} error={errors.price?.message} hint={t('courses.form.priceHint')}>
           <Input dir="ltr" type="number" min="0" step="0.01" {...register('price')} />
