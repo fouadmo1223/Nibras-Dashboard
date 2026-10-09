@@ -200,6 +200,7 @@ export default function CourseFormPage() {
           <Select
             control={control}
             name="categoryId"
+            label={t('courses.form.category')}
             placeholder={t('courses.form.selectOption')}
             options={(categories.data ?? []).map((c) => ({ value: c.id, label: c.nameEn }))}
           />
@@ -208,13 +209,19 @@ export default function CourseFormPage() {
           <Select
             control={control}
             name="instructorId"
+            label={t('courses.form.instructor')}
             placeholder={t('courses.form.selectOption')}
             options={(instructors.data ?? []).map((i) => ({ value: i.id, label: i.user.name }))}
           />
         </Field>
 
         <Field label={t('courses.form.level')} error={errors.level?.message}>
-          <Select control={control} name="level" options={COURSE_LEVELS.map((level) => ({ value: level, label: t(`courses.level.${level}`) }))} />
+          <Select
+            control={control}
+            name="level"
+            label={t('courses.form.level')}
+            options={COURSE_LEVELS.map((level) => ({ value: level, label: t(`courses.level.${level}`) }))}
+          />
         </Field>
         <Field label={t('courses.form.price')} error={errors.price?.message} hint={t('courses.form.priceHint')}>
           <Input dir="ltr" type="number" min="0" step="0.01" {...register('price')} />

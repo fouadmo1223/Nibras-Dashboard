@@ -9,8 +9,13 @@ import Menu from './Menu';
  * click-outside handling for free. Takes `control`/`name` directly (via `useController`),
  * so it drops into `<Field>` the same way a plain `register()`-bound `<Input>` does — Field
  * clones `id`/`aria-invalid`/`aria-describedby` onto it and those just work.
+ *
+ * `label` is the field's own name (e.g. "Category") — it becomes the trigger's `aria-label`,
+ * which screen readers announce instead of the associated `<label for>` text. Without it, the
+ * accessible name would fall back to `placeholder` ("Select…"), which says nothing about what
+ * the field actually is.
  */
-export default function Select({ control, name, options, placeholder, disabled, id, 'aria-invalid': ariaInvalid, 'aria-describedby': describedBy }) {
+export default function Select({ control, name, options, label, placeholder, disabled, id, 'aria-invalid': ariaInvalid, 'aria-describedby': describedBy }) {
   const {
     field: { value, onChange },
   } = useController({ control, name });
@@ -18,7 +23,7 @@ export default function Select({ control, name, options, placeholder, disabled, 
 
   return (
     <Menu
-      label={placeholder}
+      label={label}
       className="w-full"
       menuClassName="w-full"
       items={options.map((option) => ({
