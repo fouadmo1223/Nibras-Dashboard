@@ -91,7 +91,8 @@ export default function OverviewPage() {
   const info = health.data ?? health.error?.details;
   const learners = platform.data?.learners ?? 0;
   const instructors = platform.data?.instructors ?? 0;
-  const max = Math.max(learners, instructors, 1);
+  const courses = platform.data?.courses ?? 0;
+  const max = Math.max(learners, instructors, courses, 1);
 
   return (
     <motion.div variants={container} initial="hidden" animate="show" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
@@ -155,9 +156,9 @@ export default function OverviewPage() {
           <p className="mt-auto pt-6 text-sm text-foreground-muted">{t('overview.account.permissions', { count: user.permissions.length })}</p>
         </Tile>
 
-        {/* Platform counts: learners and instructors, each with its share of the larger count. */}
+        {/* Platform counts: learners, instructors and published courses, each with its share of the largest. */}
         <Tile icon={Users} title={t('overview.platform.title')} className="md:col-span-2 lg:col-span-2">
-          <div className="grid h-full gap-8 sm:grid-cols-2">
+          <div className="grid h-full gap-6 grid-cols-3">
             <Metric
               label={t('overview.platform.learners')}
               value={learners}
@@ -174,12 +175,20 @@ export default function OverviewPage() {
               loadingLabel={t('overview.platform.loading')}
               format={format}
             />
+            <Metric
+              label={t('overview.platform.courses')}
+              value={courses}
+              max={max}
+              loading={platform.isPending}
+              loadingLabel={t('overview.platform.loading')}
+              format={format}
+            />
           </div>
           {platform.isError ? <p className="mt-4 text-sm text-error">{errorMessage(platform.error, t)}</p> : null}
         </Tile>
 
         {/* Says what arrives next, without fake numbers. */}
-        <Tile icon={GraduationCap} title={t('overview.next.title')}>
+        <Tile icon={GraduationCap} title={t('overview.next.title')} className="lg:col-span-3">
           <p className="text-sm leading-6 text-foreground-muted">{t('overview.next.body')}</p>
         </Tile>
       </div>
