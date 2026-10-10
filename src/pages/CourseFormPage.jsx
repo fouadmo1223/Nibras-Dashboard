@@ -67,6 +67,7 @@ export default function CourseFormPage() {
       imageUrl: '',
       level: 'BEGINNER',
       price: 0,
+      compareAtPrice: '',
       categoryId: '',
       instructorId: '',
       isPublished: false,
@@ -88,6 +89,7 @@ export default function CourseFormPage() {
         imageUrl: detail.data.imageUrl ?? '',
         level: detail.data.level,
         price: detail.data.priceCents / 100,
+        compareAtPrice: detail.data.compareAtPriceCents ? detail.data.compareAtPriceCents / 100 : '',
         categoryId: detail.data.category.id,
         instructorId: detail.data.instructor.id,
         isPublished: detail.data.isPublished,
@@ -98,8 +100,13 @@ export default function CourseFormPage() {
   const refresh = () => queryClient.invalidateQueries({ queryKey: courseKeys.all });
   const save = useMutation({
     mutationFn: (values) => {
-      const { price, slug, ...rest } = values;
-      const body = { ...rest, imageUrl: values.imageUrl || undefined, priceCents: Math.round(price * 100) };
+      const { price, compareAtPrice, slug, ...rest } = values;
+      const body = {
+        ...rest,
+        imageUrl: values.imageUrl || undefined,
+        priceCents: Math.round(price * 100),
+        compareAtPriceCents: compareAtPrice ? Math.round(compareAtPrice * 100) : null,
+      };
       // The slug is immutable after creation — UpdateCourseDto doesn't accept it at all.
       return editing ? updateCourse(id, body) : createCourse({ slug, ...body });
     },
@@ -273,6 +280,9 @@ export default function CourseFormPage() {
         </Field>
         <Field label={t('courses.form.price')} error={errors.price?.message} hint={t('courses.form.priceHint')}>
           <Input dir="ltr" type="number" min="0" step="0.01" {...register('price')} />
+        </Field>
+        <Field label={t('courses.form.compareAtPrice')} error={errors.compareAtPrice?.message} hint={t('courses.form.compareAtPriceHint')}>
+          <Input dir="ltr" type="number" min="0" step="0.01" placeholder={t('courses.form.compareAtPricePlaceholder')} {...register('compareAtPrice')} />
         </Field>
 
         <Field

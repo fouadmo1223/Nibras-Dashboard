@@ -184,7 +184,8 @@
     "url": "Enter a valid web address.",
     "nameRequired": "At least 2 characters.",
     "required": "This field is required.",
-    "priceInvalid": "Enter a price of 0 or more."
+    "priceInvalid": "Enter a price of 0 or more.",
+    "compareAtPriceTooLow": "The original price must be higher than the current price."
   },
   "password": {
     "show": "Show password",
@@ -326,6 +327,9 @@
       "level": "Level",
       "price": "Price (USD)",
       "priceHint": "0 for a free course.",
+      "compareAtPrice": "Original price (USD)",
+      "compareAtPriceHint": "Set this higher than the price to show a sale badge and a struck-through old price.",
+      "compareAtPricePlaceholder": "No sale",
       "imageUrl": "Cover image",
       "imageUrlHint": "Upload an image, or paste a direct image URL. Shown on the course card.",
       "imageUploadHintNew": "Create the course first, then upload a cover image.",
