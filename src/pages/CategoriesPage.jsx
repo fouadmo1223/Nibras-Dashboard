@@ -75,9 +75,9 @@ export default function CategoriesPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3, delay: i * 0.04 }}
-                className="group flex flex-wrap items-center gap-4 px-6 py-4 transition-colors duration-200 hover:bg-surface-muted"
+                className="group flex flex-wrap items-center gap-x-4 gap-y-3 px-6 py-4 transition-colors duration-200 hover:bg-surface-muted"
               >
-                <Link to={`/categories/${c.id}`} className="flex min-w-0 flex-1 items-center gap-4">
+                <Link to={`/categories/${c.id}`} className="flex min-w-60 flex-1 items-center gap-4">
                   {c.imageUrl ? (
                     <img src={c.imageUrl} alt="" className="size-12 shrink-0 rounded-lg object-cover" />
                   ) : (
@@ -95,30 +95,32 @@ export default function CategoriesPage() {
                     </p>
                   </div>
                 </Link>
-                <span
-                  className={cn(
-                    'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium',
-                    c.isPublished ? 'bg-success-soft text-success' : 'bg-surface-muted text-foreground-muted',
-                  )}
-                >
-                  <Globe className="size-3.5" aria-hidden="true" />
-                  {c.isPublished ? t('categories.status.published') : t('categories.status.draft')}
-                </span>
-                <Button
-                  variant="secondary"
-                  size="sm"
-                  loading={publish.isPending && publish.variables?.id === c.id}
-                  onClick={() => publish.mutate({ id: c.id, isPublished: !c.isPublished })}
-                >
-                  {c.isPublished ? t('categories.actions.unpublish') : t('categories.actions.publish')}
-                </Button>
-                <Link
-                  to={`/categories/${c.id}`}
-                  aria-label={t('categories.edit')}
-                  className="grid size-11 shrink-0 place-items-center rounded-lg text-foreground-subtle transition-colors hover:bg-surface hover:text-foreground"
-                >
-                  <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
-                </Link>
+                <div className="ms-auto flex shrink-0 items-center gap-4">
+                  <span
+                    className={cn(
+                      'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium',
+                      c.isPublished ? 'bg-success-soft text-success' : 'bg-surface-muted text-foreground-muted',
+                    )}
+                  >
+                    <Globe className="size-3.5" aria-hidden="true" />
+                    {c.isPublished ? t('categories.status.published') : t('categories.status.draft')}
+                  </span>
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    loading={publish.isPending && publish.variables?.id === c.id}
+                    onClick={() => publish.mutate({ id: c.id, isPublished: !c.isPublished })}
+                  >
+                    {c.isPublished ? t('categories.actions.unpublish') : t('categories.actions.publish')}
+                  </Button>
+                  <Link
+                    to={`/categories/${c.id}`}
+                    aria-label={t('categories.edit')}
+                    className="grid size-11 shrink-0 place-items-center rounded-lg text-foreground-subtle transition-colors hover:bg-surface hover:text-foreground"
+                  >
+                    <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
+                  </Link>
+                </div>
               </motion.li>
             ))}
           </ul>
