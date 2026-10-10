@@ -152,13 +152,13 @@
   --secondary-foreground: var(--palette-ink-950);
   --secondary-soft: var(--palette-amber-950);
   --success: var(--palette-emerald-500);
-  --success-soft: var(--palette-emerald-900);
+  --success-soft: #073F30;
   --warning: var(--palette-amber-500);
-  --warning-soft: var(--palette-amber-900);
+  --warning-soft: #6D310F;
   --error: var(--palette-rose-500);
-  --error-soft: var(--palette-rose-900);
+  --error-soft: #360E1A;
   --info: var(--palette-sky-500);
-  --info-soft: var(--palette-sky-900);
+  --info-soft: #0C354C;
   --ring: var(--palette-ink-300);
 }
 
@@ -183,13 +183,13 @@
     --secondary-foreground: var(--palette-ink-950);
     --secondary-soft: var(--palette-amber-950);
     --success: var(--palette-emerald-500);
-    --success-soft: var(--palette-emerald-900);
+    --success-soft: #073F30;
     --warning: var(--palette-amber-500);
-    --warning-soft: var(--palette-amber-900);
+    --warning-soft: #6D310F;
     --error: var(--palette-rose-500);
-    --error-soft: var(--palette-rose-900);
+    --error-soft: #360E1A;
     --info: var(--palette-sky-500);
-    --info-soft: var(--palette-sky-900);
+    --info-soft: #0C354C;
     --ring: var(--palette-ink-300);
   }
 }
