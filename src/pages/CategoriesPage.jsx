@@ -115,7 +115,7 @@ export default function CategoriesPage() {
                 <Link
                   to={`/categories/${c.id}`}
                   aria-label={t('categories.edit')}
-                  className="grid size-9 shrink-0 place-items-center rounded-lg text-foreground-subtle transition-colors hover:bg-surface hover:text-foreground"
+                  className="grid size-11 shrink-0 place-items-center rounded-lg text-foreground-subtle transition-colors hover:bg-surface hover:text-foreground"
                 >
                   <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
                 </Link>
