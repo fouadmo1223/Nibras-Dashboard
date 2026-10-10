@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { BookOpen, Upload } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight, ImagePlus, Trash2, Upload } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -13,7 +13,16 @@ import Select from '@/components/ui/Select';
 import { useI18n } from '@/i18n/I18nProvider';
 import { applyFieldErrors, errorMessage } from '@/lib/api-errors';
 import { categoryKeys, listCategories } from '@/services/categories.service';
-import { courseKeys, createCourse, getCourse, updateCourse, uploadCourseImage } from '@/services/courses.service';
+import {
+  addCourseGalleryImage,
+  courseKeys,
+  createCourse,
+  getCourse,
+  removeCourseGalleryImage,
+  reorderCourseGalleryImages,
+  updateCourse,
+  uploadCourseImage,
+} from '@/services/courses.service';
 import { instructorKeys, listInstructors } from '@/services/instructors.service';
 import { toast } from '@/stores/toast-store';
 import { COURSE_LEVELS, courseSchema } from './course-schema';
@@ -121,6 +130,45 @@ export default function CourseFormPage() {
     const file = event.target.files?.[0];
     event.target.value = '';
     if (file) upload.mutate(file);
+  };
+
+  const addGalleryImage = useMutation({
+    mutationFn: (file) => addCourseGalleryImage(id, file),
+    onSuccess: (result) => {
+      toast.success(result.message);
+      queryClient.invalidateQueries({ queryKey: courseKeys.detail(id) });
+    },
+    onError: (error) => toast.error(errorMessage(error, t)),
+  });
+
+  const removeGalleryImage = useMutation({
+    mutationFn: (imageId) => removeCourseGalleryImage(id, imageId),
+    onSuccess: (result) => {
+      toast.success(result.message);
+      queryClient.invalidateQueries({ queryKey: courseKeys.detail(id) });
+    },
+    onError: (error) => toast.error(errorMessage(error, t)),
+  });
+
+  const reorderGallery = useMutation({
+    mutationFn: (imageIds) => reorderCourseGalleryImages(id, imageIds),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: courseKeys.detail(id) }),
+    onError: (error) => toast.error(errorMessage(error, t)),
+  });
+
+  const galleryFileInputRef = useRef(null);
+  const handleGalleryFileChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (file) addGalleryImage.mutate(file);
+  };
+  const moveGalleryImage = (index, direction) => {
+    const images = detail.data?.images ?? [];
+    const target = index + direction;
+    if (target < 0 || target >= images.length) return;
+    const ids = images.map((img) => img.id);
+    [ids[index], ids[target]] = [ids[target], ids[index]];
+    reorderGallery.mutate(ids);
   };
 
   const loadingRefs = categories.isPending || instructors.isPending;
@@ -255,6 +303,70 @@ export default function CourseFormPage() {
             </div>
           </div>
         </Field>
+
+        {editing ? (
+          <Field label={t('courses.form.gallery')} hint={t('courses.form.galleryHint')} className="md:col-span-2">
+            <div className="flex flex-wrap gap-4">
+              {(detail.data.images ?? []).map((image, index) => (
+                <div key={image.id} className="group relative size-28 shrink-0 overflow-hidden rounded-lg border border-border">
+                  <img src={image.imageUrl} alt="" className="size-full object-cover" />
+                  <div className="absolute inset-0 flex flex-col items-center justify-between bg-black/0 p-1.5 opacity-0 transition-opacity group-hover:bg-black/40 group-hover:opacity-100 focus-within:bg-black/40 focus-within:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() => removeGalleryImage.mutate(image.id)}
+                      aria-label={t('courses.form.galleryRemove')}
+                      className="self-end rounded-md bg-black/60 p-1.5 text-white hover:bg-error"
+                    >
+                      <Trash2 className="size-3.5" aria-hidden="true" />
+                    </button>
+                    <div className="flex gap-1">
+                      <button
+                        type="button"
+                        onClick={() => moveGalleryImage(index, -1)}
+                        disabled={index === 0}
+                        aria-label={t('courses.form.galleryMoveEarlier')}
+                        className="rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80 disabled:pointer-events-none disabled:opacity-40"
+                      >
+                        <ChevronLeft className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => moveGalleryImage(index, 1)}
+                        disabled={index === (detail.data.images?.length ?? 0) - 1}
+                        aria-label={t('courses.form.galleryMoveLater')}
+                        className="rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80 disabled:pointer-events-none disabled:opacity-40"
+                      >
+                        <ChevronRight className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
+              <div>
+                <input
+                  ref={galleryFileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"
+                  className="sr-only"
+                  onChange={handleGalleryFileChange}
+                />
+                <button
+                  type="button"
+                  onClick={() => galleryFileInputRef.current?.click()}
+                  disabled={addGalleryImage.isPending}
+                  className="grid size-28 shrink-0 place-items-center rounded-lg border border-dashed border-border-strong text-foreground-subtle transition-colors hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-60"
+                >
+                  {addGalleryImage.isPending ? (
+                    <span className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
+                  ) : (
+                    <ImagePlus className="size-5" aria-hidden="true" />
+                  )}
+                  <span className="sr-only">{t('courses.form.galleryAdd')}</span>
+                </button>
+              </div>
+            </div>
+          </Field>
+        ) : null}
 
         <div className="flex justify-end gap-3 md:col-span-2">
           <Button type="button" variant="secondary" onClick={() => navigate('/courses')}>

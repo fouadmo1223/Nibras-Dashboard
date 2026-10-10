@@ -16,3 +16,14 @@ export function uploadCourseImage(id, file) {
   body.append('image', file);
   return apiRequest(`/admin/courses/${id}/image`, { method: 'POST', body });
 }
+
+export function addCourseGalleryImage(id, file) {
+  const body = new FormData();
+  body.append('image', file);
+  return apiRequest(`/admin/courses/${id}/images`, { method: 'POST', body });
+}
+
+export const removeCourseGalleryImage = (id, imageId) => apiRequest(`/admin/courses/${id}/images/${imageId}`, { method: 'DELETE' });
+
+export const reorderCourseGalleryImages = (id, imageIds) =>
+  apiRequest(`/admin/courses/${id}/images/reorder`, { method: 'PATCH', body: { imageIds } });
