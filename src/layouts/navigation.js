@@ -13,6 +13,9 @@ export const NAV_GROUPS = [
       { key: 'categories', to: '/categories', icon: FolderTree, permission: 'categories.manage' },
       { key: 'instructors', to: '/instructors', icon: GraduationCap, permission: 'instructors.manage' },
       { key: 'courses', to: '/courses', icon: BookOpen, permission: 'courses.manage' },
+      // Only for an instructor who can manage their own courses' curriculum but not the whole
+      // catalog — an admin already sees "courses" above and doesn't need this one too.
+      { key: 'myCourses', to: '/my-courses', icon: BookOpen, show: (granted) => granted.has('courses.manage.own') && !granted.has('courses.manage') },
     ],
   },
   { key: 'system', items: [{ key: 'settings', to: '/settings', icon: Settings }] },
@@ -20,7 +23,8 @@ export const NAV_GROUPS = [
 
 export function visibleNavGroups(permissions) {
   const granted = new Set(permissions);
-  return NAV_GROUPS.map((group) => ({ ...group, items: group.items.filter((item) => !item.permission || granted.has(item.permission)) })).filter(
-    (group) => group.items.length > 0,
-  );
+  return NAV_GROUPS.map((group) => ({
+    ...group,
+    items: group.items.filter((item) => (item.show ? item.show(granted) : !item.permission || granted.has(item.permission))),
+  })).filter((group) => group.items.length > 0);
 }

@@ -30,7 +30,8 @@
     "closeMenu": "إغلاق التنقّل",
     "categories": "التصنيفات",
     "instructors": "المدرّبون",
-    "courses": "الدورات"
+    "courses": "الدورات",
+    "myCourses": "دوراتي"
   },
   "search": {
     "open": "ابحث أو انتقل إلى…",
@@ -349,5 +350,35 @@
       "submit": "إنشاء الدورة",
       "save": "حفظ التغييرات"
     }
+  },
+  "myCourses": {
+    "title": "دوراتي",
+    "subtitle": "الدورات التي تدرّسها. أدر منهجها من هنا — السعر والتصنيف والنشر تبقى بيد المسؤول.",
+    "empty": {
+      "title": "لا توجد دورات بعد",
+      "body": "يسند المسؤول الدورات إليك كمدرّب. عند حدوث ذلك، ستظهر دوراتك هنا."
+    },
+    "editCurriculum": "تعديل المنهج"
+  },
+  "curriculum": {
+    "title": "المنهج",
+    "summary": "{lessons} درسًا · نحو {minutes} دقيقة إجمالًا",
+    "sectionTitleEn": "عنوان القسم (إنجليزي)",
+    "sectionTitleAr": "عنوان القسم (عربي)",
+    "sectionAdd": "إضافة قسم",
+    "sectionRemove": "إزالة هذا القسم",
+    "sectionMoveEarlier": "نقل القسم للأمام",
+    "sectionMoveLater": "نقل القسم للخلف",
+    "lessonTypeVideo": "درس فيديو",
+    "lessonTypeQuiz": "محطة اختبار",
+    "lessonTitleEn": "عنوان الدرس (إنجليزي)",
+    "lessonTitleAr": "عنوان الدرس (عربي)",
+    "lessonVideoUrl": "رابط الفيديو",
+    "lessonDuration": "الدقائق",
+    "lessonAdd": "إضافة درس",
+    "lessonRemove": "إزالة هذا الدرس",
+    "lessonMoveEarlier": "نقل الدرس للأمام",
+    "lessonMoveLater": "نقل الدرس للخلف",
+    "save": "حفظ المنهج"
   }
 }

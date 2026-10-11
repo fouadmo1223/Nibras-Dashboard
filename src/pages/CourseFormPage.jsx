@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { BookOpen, ChevronLeft, ChevronRight, ImagePlus, Trash2, Upload } from 'lucide-react';
+import { BookOpen, ChevronLeft, ChevronRight, ImagePlus, Layers, Trash2, Upload } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -199,11 +199,19 @@ export default function CourseFormPage() {
 
   return (
     <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-      <div className="flex items-center gap-3">
-        <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
-          <BookOpen className="size-5" aria-hidden="true" />
-        </span>
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">{editing ? t('courses.edit') : t('courses.new')}</h1>
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
+            <BookOpen className="size-5" aria-hidden="true" />
+          </span>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{editing ? t('courses.edit') : t('courses.new')}</h1>
+        </div>
+        {editing ? (
+          <Button type="button" variant="secondary" onClick={() => navigate(`/courses/${id}/curriculum`)}>
+            <Layers className="size-4" aria-hidden="true" />
+            {t('curriculum.title')}
+          </Button>
+        ) : null}
       </div>
 
       <Card as="form" onSubmit={handleSubmit((values) => save.mutate(values))} noValidate className="mt-8 grid gap-5 p-6 md:grid-cols-2">

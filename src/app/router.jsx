@@ -48,6 +48,15 @@ export const routes = [
               { index: true, lazy: page(() => import('@/pages/CoursesPage')) },
               { path: 'new', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.new' } },
               { path: ':id', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.edit' } },
+              { path: ':id/curriculum', lazy: page(() => import('@/pages/CourseCurriculumPage')), handle: { crumb: 'curriculum.title' } },
+            ],
+          },
+          {
+            path: 'my-courses',
+            handle: { crumb: 'nav.myCourses' },
+            children: [
+              { index: true, lazy: page(() => import('@/pages/MyCoursesPage')) },
+              { path: ':id/curriculum', lazy: page(() => import('@/pages/CourseCurriculumPage')), handle: { crumb: 'curriculum.title' } },
             ],
           },
           {

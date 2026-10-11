@@ -30,7 +30,8 @@
     "closeMenu": "Close navigation",
     "categories": "Categories",
     "instructors": "Instructors",
-    "courses": "Courses"
+    "courses": "Courses",
+    "myCourses": "My courses"
   },
   "search": {
     "open": "Search or jump to…",
@@ -345,5 +346,35 @@
       "submit": "Create course",
       "save": "Save changes"
     }
+  },
+  "myCourses": {
+    "title": "My courses",
+    "subtitle": "Courses you teach. Manage their curriculum here — price, category and publishing stay with an admin.",
+    "empty": {
+      "title": "No courses yet",
+      "body": "An admin assigns courses to you as their instructor. Once they do, your courses appear here."
+    },
+    "editCurriculum": "Edit curriculum"
+  },
+  "curriculum": {
+    "title": "Curriculum",
+    "summary": "{lessons} lessons · about {minutes} min total",
+    "sectionTitleEn": "Section title (English)",
+    "sectionTitleAr": "Section title (Arabic)",
+    "sectionAdd": "Add section",
+    "sectionRemove": "Remove this section",
+    "sectionMoveEarlier": "Move section earlier",
+    "sectionMoveLater": "Move section later",
+    "lessonTypeVideo": "Video lesson",
+    "lessonTypeQuiz": "Quiz checkpoint",
+    "lessonTitleEn": "Lesson title (English)",
+    "lessonTitleAr": "Lesson title (Arabic)",
+    "lessonVideoUrl": "Video URL",
+    "lessonDuration": "Minutes",
+    "lessonAdd": "Add lesson",
+    "lessonRemove": "Remove this lesson",
+    "lessonMoveEarlier": "Move lesson earlier",
+    "lessonMoveLater": "Move lesson later",
+    "save": "Save curriculum"
   }
 }
