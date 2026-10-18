@@ -1,4 +1,4 @@
-import { BookOpen, FolderTree, GraduationCap, LayoutDashboard, Settings } from 'lucide-react';
+import { BookOpen, ClipboardList, FolderTree, GraduationCap, LayoutDashboard, Settings } from 'lucide-react';
 
 /**
  * Sidebar / command-palette navigation. Admin modules add their entries here as they
@@ -13,6 +13,7 @@ export const NAV_GROUPS = [
       { key: 'categories', to: '/categories', icon: FolderTree, permission: 'categories.manage' },
       { key: 'instructors', to: '/instructors', icon: GraduationCap, permission: 'instructors.manage' },
       { key: 'courses', to: '/courses', icon: BookOpen, permission: 'courses.manage' },
+      { key: 'orders', to: '/orders', icon: ClipboardList, permission: 'orders.manage' },
       // Only for an instructor who can manage their own courses' curriculum but not the whole
       // catalog — an admin already sees "courses" above and doesn't need this one too.
       { key: 'myCourses', to: '/my-courses', icon: BookOpen, show: (granted) => granted.has('courses.manage.own') && !granted.has('courses.manage') },

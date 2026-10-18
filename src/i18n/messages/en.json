@@ -31,7 +31,8 @@
     "categories": "Categories",
     "instructors": "Instructors",
     "courses": "Courses",
-    "myCourses": "My courses"
+    "myCourses": "My courses",
+    "orders": "Orders"
   },
   "search": {
     "open": "Search or jump to…",
@@ -111,6 +112,16 @@
     "next": {
       "title": "Coming next",
       "body": "Learning analytics, revenue and enrolment trends appear here once enrolments are live."
+    },
+    "mine": {
+      "subtitle": "Your teaching activity at a glance.",
+      "totalCourses": "Your courses",
+      "published": "Approved & live",
+      "pending": "Pending approval",
+      "draft": "Drafts",
+      "students": "Enrolled students",
+      "loading": "Loading your stats",
+      "viewCourses": "View my courses"
     }
   },
   "settings": {
@@ -241,14 +252,20 @@
       "slug": "Link name",
       "slugHint": "Lower-case letters, numbers and dashes.",
       "slugLocked": "The link name can't be changed after a category is created.",
-      "nameEn": "Name (English)",
-      "nameAr": "Name (Arabic)",
-      "descriptionEn": "Description (English)",
-      "descriptionAr": "Description (Arabic)",
+      "name": "Name",
+      "description": "Description",
       "imageUrl": "Cover image",
       "imageUrlHint": "Upload an image, or paste a direct image URL. Shown on the category card.",
       "imageUploadHintNew": "Create the category first, then upload a cover image.",
       "uploadImage": "Upload image",
+      "sections": {
+        "basics": "Basics",
+        "basicsHint": "The link name and whether this is visible on the website.",
+        "content": "Content",
+        "contentHint": "Shown to visitors — switch languages with the EN/AR toggle.",
+        "media": "Cover image",
+        "mediaHint": "Shown on the category card."
+      },
       "isPublished": "Visibility",
       "publishNow": "Publish immediately",
       "submit": "Create category",
@@ -278,34 +295,74 @@
       "email": "Email",
       "emailHint": "The person must already have a Nibras account.",
       "addSubmit": "Add instructor",
-      "headlineEn": "Headline (English)",
-      "headlineAr": "Headline (Arabic)",
-      "bioEn": "Bio (English)",
-      "bioAr": "Bio (Arabic)",
+      "headline": "Headline",
+      "bio": "Bio",
       "website": "Website",
       "linkedin": "LinkedIn",
       "x": "X (Twitter)",
-      "submit": "Save changes"
+      "submit": "Save changes",
+      "sections": {
+        "profile": "Profile",
+        "profileHint": "Shown on the instructor's public page — switch languages with the EN/AR toggle.",
+        "links": "Links",
+        "linksHint": "Optional — shown as icons on the public profile."
+      }
     }
   },
   "courses": {
     "title": "Courses",
-    "subtitle": "Manage the course catalog. Only published courses appear on the website.",
+    "subtitle": "Every course on the platform. Instructors own their content — you can view any course and remove one with a reason.",
+    "summary": "{count} courses · {published} published",
     "new": "New course",
     "edit": "Edit course",
+    "view": "View course",
     "loading": "Loading courses",
     "free": "Free",
     "empty": {
       "title": "No courses yet",
-      "body": "Create the first course. Drafts stay hidden until you publish them."
+      "body": "Courses appear here once an instructor creates one."
     },
     "status": {
       "published": "Published",
-      "draft": "Draft"
+      "draft": "Draft",
+      "pending": "Pending approval"
     },
     "actions": {
       "publish": "Publish",
-      "unpublish": "Unpublish"
+      "unpublish": "Unpublish",
+      "view": "View",
+      "remove": "Remove",
+      "approve": "Approve",
+      "reject": "Reject"
+    },
+    "filters": {
+      "category": "Category",
+      "instructor": "Instructor",
+      "price": "Price",
+      "level": "Level",
+      "all": "All",
+      "free": "Free",
+      "paid": "Paid"
+    },
+    "removeDialog": {
+      "title": "Remove “{name}”",
+      "body": "This permanently deletes the course and its curriculum. The instructor will see your reason in their dashboard.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Why is this course being removed?",
+      "cancel": "Cancel",
+      "confirm": "Remove course"
+    },
+    "rejectDialog": {
+      "title": "Reject “{name}”",
+      "body": "The course stays unpublished. The instructor will see your reason and can request review again.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Why is this publish request being rejected?",
+      "cancel": "Cancel",
+      "confirm": "Reject request"
+    },
+    "approval": {
+      "pendingNotice": "Waiting for admin approval.",
+      "rejectedNotice": "An admin rejected your last publish request:"
     },
     "level": {
       "BEGINNER": "Beginner",
@@ -316,12 +373,9 @@
       "slug": "Link name",
       "slugHint": "Lower-case letters, numbers and dashes.",
       "slugLocked": "The link name can't be changed after a course is created.",
-      "titleEn": "Title (English)",
-      "titleAr": "Title (Arabic)",
-      "subtitleEn": "Subtitle (English)",
-      "subtitleAr": "Subtitle (Arabic)",
-      "descriptionEn": "Description (English)",
-      "descriptionAr": "Description (Arabic)",
+      "title": "Title",
+      "subtitle": "Subtitle",
+      "description": "Description",
       "category": "Category",
       "instructor": "Instructor",
       "selectOption": "Select…",
@@ -342,19 +396,60 @@
       "galleryMoveEarlier": "Move earlier",
       "galleryMoveLater": "Move later",
       "isPublished": "Visibility",
-      "publishNow": "Publish immediately",
+      "publishNow": "Submit for admin approval",
+      "publishNowHint": "An admin reviews every publish request before a course goes live.",
       "submit": "Create course",
-      "save": "Save changes"
+      "save": "Save changes",
+      "sections": {
+        "basics": "Basics",
+        "basicsHint": "The link name and whether this is visible on the website.",
+        "content": "Content",
+        "contentHint": "Shown to visitors — switch languages with the EN/AR toggle.",
+        "categoryLevel": "Category & level",
+        "pricing": "Pricing",
+        "pricingHint": "Leave the price at 0 for a free course.",
+        "media": "Cover image",
+        "mediaHint": "Shown on the course card and detail page.",
+        "gallery": "Gallery"
+      }
+    }
+  },
+  "orders": {
+    "title": "Orders",
+    "subtitle": "Orders students have placed. Mark one paid once you've confirmed payment out-of-band — this enrols the student automatically.",
+    "loading": "Loading orders",
+    "empty": {
+      "title": "No orders yet",
+      "body": "Orders appear here once a student places one from their cart."
+    },
+    "status": {
+      "PENDING": "Pending",
+      "PAID": "Paid",
+      "CANCELLED": "Cancelled"
+    },
+    "actions": {
+      "markPaid": "Mark as paid",
+      "cancel": "Cancel"
+    },
+    "filters": {
+      "status": "Status",
+      "all": "All"
     }
   },
   "myCourses": {
     "title": "My courses",
-    "subtitle": "Courses you teach. Manage their curriculum here — price, category and publishing stay with an admin.",
+    "subtitle": "Courses you create and teach.",
     "empty": {
       "title": "No courses yet",
-      "body": "An admin assigns courses to you as their instructor. Once they do, your courses appear here."
+      "body": "Create your first course to get started."
     },
-    "editCurriculum": "Edit curriculum"
+    "editCurriculum": "Edit curriculum",
+    "editDetails": "Edit details",
+    "removals": {
+      "title": "Removal notices",
+      "dismiss": "Dismiss",
+      "dismissed": "Dismissed."
+    }
   },
   "curriculum": {
     "title": "Curriculum",
@@ -370,11 +465,65 @@
     "lessonTitleEn": "Lesson title (English)",
     "lessonTitleAr": "Lesson title (Arabic)",
     "lessonVideoUrl": "Video URL",
+    "lessonVideoUrlHint": "Paste a link, or save the lesson first and upload a video file below.",
     "lessonDuration": "Minutes",
+    "lessonUpload": "Upload video",
+    "lessonUploadReplace": "Replace video",
+    "lessonUploadProgress": "Uploading… {percent}%",
+    "lessonUploadHint": "Save the lesson first to enable video upload.",
+    "lessonUploadSuccess": "Video uploaded.",
     "lessonAdd": "Add lesson",
     "lessonRemove": "Remove this lesson",
     "lessonMoveEarlier": "Move lesson earlier",
     "lessonMoveLater": "Move lesson later",
+    "lessonQuizConfigure": "Configure quiz",
+    "lessonQuizHint": "Save the lesson first to configure its quiz.",
     "save": "Save curriculum"
+  },
+  "quiz": {
+    "title": "Quiz",
+    "backToCurriculum": "Back to curriculum",
+    "modeLabel": "Quiz type",
+    "modeNone": "Not configured",
+    "modeMcq": "Multiple choice (auto-graded)",
+    "modeUpload": "File upload (you grade it)",
+    "questionCount": "Questions shown per attempt",
+    "questionCountHint": "Students are each shown this many questions, drawn at random from the bank below.",
+    "uploadMaxMb": "Max file size (MB)",
+    "saveConfig": "Save quiz settings",
+    "configSaved": "Saved.",
+    "questionBank": {
+      "title": "Question bank",
+      "hint": "Enter at least as many questions as students are shown — enter more to draw from a wider pool.",
+      "empty": "No questions yet.",
+      "questionTitleEn": "Question (English)",
+      "questionTitleAr": "Question (Arabic)",
+      "optionTextEn": "Option (English)",
+      "optionTextAr": "Option (Arabic)",
+      "optionCorrect": "Correct answer",
+      "optionAdd": "Add option",
+      "optionRemove": "Remove this option",
+      "questionAdd": "Add question",
+      "questionRemove": "Remove this question",
+      "save": "Save questions",
+      "needsOneCorrect": "Each question needs exactly one correct option."
+    },
+    "submissions": {
+      "title": "Submissions",
+      "empty": "No submissions yet.",
+      "student": "Student",
+      "submittedAt": "Submitted",
+      "grade": "Grade (%)",
+      "feedback": "Feedback",
+      "download": "Download",
+      "save": "Save grade",
+      "saved": "Grade saved.",
+      "ungraded": "Not graded yet"
+    },
+    "attempts": {
+      "title": "Attempts",
+      "empty": "No one has attempted this quiz yet.",
+      "inProgress": "In progress"
+    }
   }
 }

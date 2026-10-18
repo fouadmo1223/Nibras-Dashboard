@@ -42,21 +42,24 @@ export const routes = [
             ],
           },
           {
+            // Admin moderation: view any course, remove with a reason. Editing stays with its instructor.
             path: 'courses',
             handle: { crumb: 'nav.courses' },
             children: [
               { index: true, lazy: page(() => import('@/pages/CoursesPage')) },
-              { path: 'new', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.new' } },
-              { path: ':id', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.edit' } },
-              { path: ':id/curriculum', lazy: page(() => import('@/pages/CourseCurriculumPage')), handle: { crumb: 'curriculum.title' } },
+              { path: ':id', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.view' } },
             ],
           },
           {
+            // An instructor's own courses: create, edit, publish and manage curriculum/quizzes.
             path: 'my-courses',
             handle: { crumb: 'nav.myCourses' },
             children: [
               { index: true, lazy: page(() => import('@/pages/MyCoursesPage')) },
+              { path: 'new', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.new' } },
+              { path: ':id', lazy: page(() => import('@/pages/CourseFormPage')), handle: { crumb: 'courses.edit' } },
               { path: ':id/curriculum', lazy: page(() => import('@/pages/CourseCurriculumPage')), handle: { crumb: 'curriculum.title' } },
+              { path: ':id/lessons/:lessonId/quiz', lazy: page(() => import('@/pages/CourseQuizPage')), handle: { crumb: 'quiz.title' } },
             ],
           },
           {
@@ -68,6 +71,7 @@ export const routes = [
               { path: ':id', lazy: page(() => import('@/pages/InstructorFormPage')), handle: { crumb: 'instructors.edit' } },
             ],
           },
+          { path: 'orders', lazy: page(() => import('@/pages/OrdersPage')), handle: { crumb: 'nav.orders' } },
           { path: 'settings', lazy: page(() => import('@/pages/SettingsPage')), handle: { crumb: 'nav.settings' } },
           { path: '*', element: <NotFoundPage /> },
         ],

@@ -3,16 +3,33 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { BookOpen, ChevronLeft, ChevronRight, ImagePlus, Layers, Trash2, Upload } from 'lucide-react';
+import { motion } from 'motion/react';
+import {
+  BookOpen,
+  ChevronLeft,
+  ChevronRight,
+  DollarSign,
+  FileText,
+  Image as ImageIcon,
+  ImagePlus,
+  Images,
+  Layers,
+  SlidersHorizontal,
+  Tag,
+  Trash2,
+  Upload,
+} from 'lucide-react';
 import Alert from '@/components/ui/Alert';
+import BilingualField from '@/components/ui/BilingualField';
 import Button from '@/components/ui/Button';
-import Card from '@/components/ui/Card';
 import Field from '@/components/ui/Field';
+import FormSection from '@/components/ui/FormSection';
 import Input from '@/components/ui/Input';
 import Select from '@/components/ui/Select';
+import { useCurrentUser } from '@/features/auth/current-user';
 import { useI18n } from '@/i18n/I18nProvider';
 import { applyFieldErrors, errorMessage } from '@/lib/api-errors';
-import { categoryKeys, listCategories } from '@/services/categories.service';
+import { categoryKeys, listPublicCategories } from '@/services/categories.service';
 import {
   addCourseGalleryImage,
   courseKeys,
@@ -23,25 +40,25 @@ import {
   updateCourse,
   uploadCourseImage,
 } from '@/services/courses.service';
-import { instructorKeys, listInstructors } from '@/services/instructors.service';
 import { toast } from '@/stores/toast-store';
 import { COURSE_LEVELS, courseSchema } from './course-schema';
 
-const textareaClass =
-  'w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring';
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } };
+const item = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 28 } } };
 
-/** Create or edit a course (`/courses/new` or `/courses/:id`). */
+/** Create or edit a course (`/my-courses/new` or `/my-courses/:id`) — an admin opening `/courses/:id` gets the same page read-only. */
 export default function CourseFormPage() {
   const { id } = useParams();
   const editing = Boolean(id);
   const { t } = useI18n();
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const user = useCurrentUser();
+  const readOnly = editing && user.permissions.includes('courses.manage');
   const schema = useMemo(() => courseSchema(t), [t]);
 
   const detail = useQuery({ queryKey: courseKeys.detail(id), queryFn: () => getCourse(id), enabled: editing });
-  const categories = useQuery({ queryKey: categoryKeys.admin(), queryFn: listCategories });
-  const instructors = useQuery({ queryKey: instructorKeys.admin(), queryFn: listInstructors });
+  const categories = useQuery({ queryKey: categoryKeys.public(), queryFn: listPublicCategories });
 
   const fileInputRef = useRef(null);
 
@@ -69,7 +86,6 @@ export default function CourseFormPage() {
       price: 0,
       compareAtPrice: '',
       categoryId: '',
-      instructorId: '',
       isPublished: false,
     },
   });
@@ -91,7 +107,6 @@ export default function CourseFormPage() {
         price: detail.data.priceCents / 100,
         compareAtPrice: detail.data.compareAtPriceCents ? detail.data.compareAtPriceCents / 100 : '',
         categoryId: detail.data.category.id,
-        instructorId: detail.data.instructor.id,
         isPublished: detail.data.isPublished,
       });
     }
@@ -113,12 +128,11 @@ export default function CourseFormPage() {
     onSuccess: (result) => {
       toast.success(result.message);
       refresh();
-      navigate('/courses');
+      navigate('/my-courses');
     },
     onError: (error) => {
       if (error.code === 'SLUG_TAKEN') setError('slug', { type: 'server', message: error.message });
       else if (error.code === 'CATEGORY_NOT_FOUND') setError('categoryId', { type: 'server', message: error.message });
-      else if (error.code === 'INSTRUCTOR_NOT_FOUND') setError('instructorId', { type: 'server', message: error.message });
       else applyFieldErrors(error, setError, ['slug', 'titleEn', 'titleAr', 'subtitleEn', 'subtitleAr', 'descriptionEn', 'descriptionAr', 'imageUrl']);
     },
   });
@@ -178,9 +192,7 @@ export default function CourseFormPage() {
     reorderGallery.mutate(ids);
   };
 
-  const loadingRefs = categories.isPending || instructors.isPending;
-
-  if (editing && (detail.isPending || loadingRefs)) {
+  if (editing && (detail.isPending || categories.isPending)) {
     return (
       <div className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="h-9 w-48 animate-pulse rounded-md bg-surface-muted" />
@@ -204,197 +216,222 @@ export default function CourseFormPage() {
           <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-primary-soft text-primary">
             <BookOpen className="size-5" aria-hidden="true" />
           </span>
-          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{editing ? t('courses.edit') : t('courses.new')}</h1>
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">{readOnly ? t('courses.view') : editing ? t('courses.edit') : t('courses.new')}</h1>
         </div>
-        {editing ? (
-          <Button type="button" variant="secondary" onClick={() => navigate(`/courses/${id}/curriculum`)}>
+        {editing && !readOnly ? (
+          <Button type="button" variant="secondary" onClick={() => navigate(`/my-courses/${id}/curriculum`)}>
             <Layers className="size-4" aria-hidden="true" />
             {t('curriculum.title')}
           </Button>
         ) : null}
       </div>
 
-      <Card as="form" onSubmit={handleSubmit((values) => save.mutate(values))} noValidate className="mt-8 grid gap-5 p-6 md:grid-cols-2">
-        {save.isError && !['SLUG_TAKEN', 'CATEGORY_NOT_FOUND', 'INSTRUCTOR_NOT_FOUND', 'VALIDATION_ERROR'].includes(save.error.code) ? (
-          <div className="md:col-span-2">
-            <Alert tone="error" title={errorMessage(save.error, t)} />
-          </div>
-        ) : null}
+      <motion.form
+        variants={container}
+        initial="hidden"
+        animate="show"
+        onSubmit={readOnly ? (e) => e.preventDefault() : handleSubmit((values) => save.mutate(values))}
+        noValidate
+        className="mt-8"
+      >
+        <fieldset disabled={readOnly} className="space-y-5">
+          {save.isError && !['SLUG_TAKEN', 'CATEGORY_NOT_FOUND', 'INSTRUCTOR_NOT_FOUND', 'VALIDATION_ERROR'].includes(save.error.code) ? (
+            <motion.div variants={item}>
+              <Alert tone="error" title={errorMessage(save.error, t)} />
+            </motion.div>
+          ) : null}
 
-        {editing ? (
-          <Field label={t('courses.form.slug')} hint={t('courses.form.slugLocked')}>
-            <Input dir="ltr" value={detail.data.slug} disabled />
-          </Field>
-        ) : (
-          <Field label={t('courses.form.slug')} error={errors.slug?.message} hint={t('courses.form.slugHint')}>
-            <Input dir="ltr" placeholder="complete-web-development" {...register('slug')} />
-          </Field>
-        )}
+          {editing && detail.data.publishRequestedAt ? (
+            <motion.div variants={item}>
+              <Alert tone="info" title={t('courses.approval.pendingNotice')} />
+            </motion.div>
+          ) : editing && detail.data.publishRejectedReason ? (
+            <motion.div variants={item}>
+              <Alert tone="error" title={t('courses.approval.rejectedNotice')}>
+                {detail.data.publishRejectedReason}
+              </Alert>
+            </motion.div>
+          ) : null}
 
-        <Field label={t('courses.form.isPublished')}>
-          <label className="flex h-11 items-center gap-2.5 text-sm text-foreground">
-            <input type="checkbox" className="size-4 accent-primary" {...register('isPublished')} />
-            {t('courses.form.publishNow')}
-          </label>
-        </Field>
+          <FormSection icon={SlidersHorizontal} title={t('courses.form.sections.basics')} description={t('courses.form.sections.basicsHint')}>
+            {editing ? (
+              <Field label={t('courses.form.slug')} hint={t('courses.form.slugLocked')}>
+                <Input dir="ltr" value={detail.data.slug} disabled />
+              </Field>
+            ) : (
+              <Field label={t('courses.form.slug')} error={errors.slug?.message} hint={t('courses.form.slugHint')}>
+                <Input dir="ltr" placeholder="complete-web-development" {...register('slug')} />
+              </Field>
+            )}
 
-        <Field label={t('courses.form.titleEn')} error={errors.titleEn?.message}>
-          <Input dir="ltr" {...register('titleEn')} />
-        </Field>
-        <Field label={t('courses.form.titleAr')} error={errors.titleAr?.message}>
-          <Input dir="rtl" {...register('titleAr')} />
-        </Field>
+            <Field label={t('courses.form.isPublished')} hint={t('courses.form.publishNowHint')}>
+              <label className="flex h-11 items-center gap-2.5 text-sm text-foreground">
+                <input type="checkbox" className="size-4 accent-primary" {...register('isPublished')} />
+                {t('courses.form.publishNow')}
+              </label>
+            </Field>
+          </FormSection>
 
-        <Field label={t('courses.form.subtitleEn')} error={errors.subtitleEn?.message}>
-          <Input dir="ltr" {...register('subtitleEn')} />
-        </Field>
-        <Field label={t('courses.form.subtitleAr')} error={errors.subtitleAr?.message}>
-          <Input dir="rtl" {...register('subtitleAr')} />
-        </Field>
+          <FormSection icon={FileText} title={t('courses.form.sections.content')} description={t('courses.form.sections.contentHint')}>
+            <div className="md:col-span-2">
+              <BilingualField label={t('courses.form.title')} nameEn="titleEn" nameAr="titleAr" register={register} errors={errors} required />
+            </div>
+            <div className="md:col-span-2">
+              <BilingualField label={t('courses.form.subtitle')} nameEn="subtitleEn" nameAr="subtitleAr" register={register} errors={errors} />
+            </div>
+            <div className="md:col-span-2">
+              <BilingualField
+                label={t('courses.form.description')}
+                nameEn="descriptionEn"
+                nameAr="descriptionAr"
+                register={register}
+                errors={errors}
+                multiline
+              />
+            </div>
+          </FormSection>
 
-        <Field label={t('courses.form.descriptionEn')} error={errors.descriptionEn?.message}>
-          <textarea dir="ltr" rows={3} {...register('descriptionEn')} className={textareaClass} />
-        </Field>
-        <Field label={t('courses.form.descriptionAr')} error={errors.descriptionAr?.message}>
-          <textarea dir="rtl" rows={3} {...register('descriptionAr')} className={textareaClass} />
-        </Field>
+          <FormSection icon={Tag} title={t('courses.form.sections.categoryLevel')} bodyClassName="md:grid-cols-2">
+            <Field label={t('courses.form.category')} error={errors.categoryId?.message}>
+              <Select
+                control={control}
+                name="categoryId"
+                label={t('courses.form.category')}
+                placeholder={t('courses.form.selectOption')}
+                options={(categories.data ?? []).map((c) => ({ value: c.id, label: c.nameEn }))}
+              />
+            </Field>
+            <Field label={t('courses.form.level')} error={errors.level?.message}>
+              <Select
+                control={control}
+                name="level"
+                label={t('courses.form.level')}
+                options={COURSE_LEVELS.map((level) => ({ value: level, label: t(`courses.level.${level}`) }))}
+              />
+            </Field>
+          </FormSection>
 
-        <Field label={t('courses.form.category')} error={errors.categoryId?.message}>
-          <Select
-            control={control}
-            name="categoryId"
-            label={t('courses.form.category')}
-            placeholder={t('courses.form.selectOption')}
-            options={(categories.data ?? []).map((c) => ({ value: c.id, label: c.nameEn }))}
-          />
-        </Field>
-        <Field label={t('courses.form.instructor')} error={errors.instructorId?.message}>
-          <Select
-            control={control}
-            name="instructorId"
-            label={t('courses.form.instructor')}
-            placeholder={t('courses.form.selectOption')}
-            options={(instructors.data ?? []).map((i) => ({ value: i.id, label: i.user.name }))}
-          />
-        </Field>
+          <FormSection icon={DollarSign} title={t('courses.form.sections.pricing')} description={t('courses.form.sections.pricingHint')}>
+            <Field label={t('courses.form.price')} error={errors.price?.message} hint={t('courses.form.priceHint')}>
+              <Input dir="ltr" type="number" min="0" step="0.01" {...register('price')} />
+            </Field>
+            <Field label={t('courses.form.compareAtPrice')} error={errors.compareAtPrice?.message} hint={t('courses.form.compareAtPriceHint')}>
+              <Input dir="ltr" type="number" min="0" step="0.01" placeholder={t('courses.form.compareAtPricePlaceholder')} {...register('compareAtPrice')} />
+            </Field>
+          </FormSection>
 
-        <Field label={t('courses.form.level')} error={errors.level?.message}>
-          <Select
-            control={control}
-            name="level"
-            label={t('courses.form.level')}
-            options={COURSE_LEVELS.map((level) => ({ value: level, label: t(`courses.level.${level}`) }))}
-          />
-        </Field>
-        <Field label={t('courses.form.price')} error={errors.price?.message} hint={t('courses.form.priceHint')}>
-          <Input dir="ltr" type="number" min="0" step="0.01" {...register('price')} />
-        </Field>
-        <Field label={t('courses.form.compareAtPrice')} error={errors.compareAtPrice?.message} hint={t('courses.form.compareAtPriceHint')}>
-          <Input dir="ltr" type="number" min="0" step="0.01" placeholder={t('courses.form.compareAtPricePlaceholder')} {...register('compareAtPrice')} />
-        </Field>
+          <FormSection icon={ImageIcon} title={t('courses.form.sections.media')} description={t('courses.form.sections.mediaHint')} bodyClassName="md:grid-cols-1">
+            <Field
+              label={t('courses.form.imageUrl')}
+              error={errors.imageUrl?.message}
+              hint={editing ? t('courses.form.imageUrlHint') : t('courses.form.imageUploadHintNew')}
+            >
+              <div className="flex flex-wrap items-start gap-4">
+                {imageUrl ? <img src={imageUrl} alt="" className="h-16 w-28 shrink-0 rounded-lg border border-border object-cover" /> : null}
+                <div className="min-w-0 flex-1 space-y-2">
+                  <Input dir="ltr" placeholder="https://…" {...register('imageUrl')} />
+                  {editing ? (
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"
+                        className="sr-only"
+                        onChange={handleFileChange}
+                      />
+                      <Button type="button" variant="secondary" loading={upload.isPending} onClick={() => fileInputRef.current?.click()}>
+                        <Upload className="size-4" aria-hidden="true" />
+                        {t('courses.form.uploadImage')}
+                      </Button>
+                    </>
+                  ) : null}
+                </div>
+              </div>
+            </Field>
+          </FormSection>
 
-        <Field
-          label={t('courses.form.imageUrl')}
-          error={errors.imageUrl?.message}
-          hint={editing ? t('courses.form.imageUrlHint') : t('courses.form.imageUploadHintNew')}
-          className="md:col-span-2"
-        >
-          <div className="flex flex-wrap items-start gap-4">
-            {imageUrl ? <img src={imageUrl} alt="" className="h-16 w-28 shrink-0 rounded-lg border border-border object-cover" /> : null}
-            <div className="min-w-0 flex-1 space-y-2">
-              <Input dir="ltr" placeholder="https://…" {...register('imageUrl')} />
-              {editing ? (
-                <>
+          {editing ? (
+            <FormSection icon={Images} title={t('courses.form.sections.gallery')} description={t('courses.form.galleryHint')} bodyClassName="md:grid-cols-1">
+              <div className="flex flex-wrap gap-4">
+                {(detail.data.images ?? []).map((image, index) => (
+                  <div key={image.id} className="group relative size-28 shrink-0 overflow-hidden rounded-lg border border-border">
+                    <img src={image.imageUrl} alt="" className="size-full object-cover" />
+                    <div className="absolute inset-0 flex flex-col items-center justify-between bg-black/0 p-1.5 opacity-0 transition-opacity group-hover:bg-black/40 group-hover:opacity-100 focus-within:bg-black/40 focus-within:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryImage.mutate(image.id)}
+                        aria-label={t('courses.form.galleryRemove')}
+                        className="self-end rounded-md bg-black/60 p-1.5 text-white hover:bg-error"
+                      >
+                        <Trash2 className="size-3.5" aria-hidden="true" />
+                      </button>
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => moveGalleryImage(index, -1)}
+                          disabled={index === 0}
+                          aria-label={t('courses.form.galleryMoveEarlier')}
+                          className="rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80 disabled:pointer-events-none disabled:opacity-40"
+                        >
+                          <ChevronLeft className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => moveGalleryImage(index, 1)}
+                          disabled={index === (detail.data.images?.length ?? 0) - 1}
+                          aria-label={t('courses.form.galleryMoveLater')}
+                          className="rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80 disabled:pointer-events-none disabled:opacity-40"
+                        >
+                          <ChevronRight className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+                <div>
                   <input
-                    ref={fileInputRef}
+                    ref={galleryFileInputRef}
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"
                     className="sr-only"
-                    onChange={handleFileChange}
+                    onChange={handleGalleryFileChange}
                   />
-                  <Button type="button" variant="secondary" loading={upload.isPending} onClick={() => fileInputRef.current?.click()}>
-                    <Upload className="size-4" aria-hidden="true" />
-                    {t('courses.form.uploadImage')}
-                  </Button>
-                </>
-              ) : null}
-            </div>
-          </div>
-        </Field>
-
-        {editing ? (
-          <Field label={t('courses.form.gallery')} hint={t('courses.form.galleryHint')} className="md:col-span-2">
-            <div className="flex flex-wrap gap-4">
-              {(detail.data.images ?? []).map((image, index) => (
-                <div key={image.id} className="group relative size-28 shrink-0 overflow-hidden rounded-lg border border-border">
-                  <img src={image.imageUrl} alt="" className="size-full object-cover" />
-                  <div className="absolute inset-0 flex flex-col items-center justify-between bg-black/0 p-1.5 opacity-0 transition-opacity group-hover:bg-black/40 group-hover:opacity-100 focus-within:bg-black/40 focus-within:opacity-100">
-                    <button
-                      type="button"
-                      onClick={() => removeGalleryImage.mutate(image.id)}
-                      aria-label={t('courses.form.galleryRemove')}
-                      className="self-end rounded-md bg-black/60 p-1.5 text-white hover:bg-error"
-                    >
-                      <Trash2 className="size-3.5" aria-hidden="true" />
-                    </button>
-                    <div className="flex gap-1">
-                      <button
-                        type="button"
-                        onClick={() => moveGalleryImage(index, -1)}
-                        disabled={index === 0}
-                        aria-label={t('courses.form.galleryMoveEarlier')}
-                        className="rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80 disabled:pointer-events-none disabled:opacity-40"
-                      >
-                        <ChevronLeft className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => moveGalleryImage(index, 1)}
-                        disabled={index === (detail.data.images?.length ?? 0) - 1}
-                        aria-label={t('courses.form.galleryMoveLater')}
-                        className="rounded-md bg-black/60 p-1.5 text-white hover:bg-black/80 disabled:pointer-events-none disabled:opacity-40"
-                      >
-                        <ChevronRight className="size-3.5 rtl:-scale-x-100" aria-hidden="true" />
-                      </button>
-                    </div>
-                  </div>
+                  <button
+                    type="button"
+                    onClick={() => galleryFileInputRef.current?.click()}
+                    disabled={addGalleryImage.isPending}
+                    className="grid size-28 shrink-0 place-items-center rounded-lg border border-dashed border-border-strong text-foreground-subtle transition-colors hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-60"
+                  >
+                    {addGalleryImage.isPending ? (
+                      <span className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
+                    ) : (
+                      <ImagePlus className="size-5" aria-hidden="true" />
+                    )}
+                    <span className="sr-only">{t('courses.form.galleryAdd')}</span>
+                  </button>
                 </div>
-              ))}
-              <div>
-                <input
-                  ref={galleryFileInputRef}
-                  type="file"
-                  accept="image/jpeg,image/png,image/webp,image/gif,image/avif,image/heic,image/heif"
-                  className="sr-only"
-                  onChange={handleGalleryFileChange}
-                />
-                <button
-                  type="button"
-                  onClick={() => galleryFileInputRef.current?.click()}
-                  disabled={addGalleryImage.isPending}
-                  className="grid size-28 shrink-0 place-items-center rounded-lg border border-dashed border-border-strong text-foreground-subtle transition-colors hover:border-primary hover:text-primary disabled:pointer-events-none disabled:opacity-60"
-                >
-                  {addGalleryImage.isPending ? (
-                    <span className="size-5 animate-spin rounded-full border-2 border-current border-t-transparent" aria-hidden="true" />
-                  ) : (
-                    <ImagePlus className="size-5" aria-hidden="true" />
-                  )}
-                  <span className="sr-only">{t('courses.form.galleryAdd')}</span>
-                </button>
               </div>
-            </div>
-          </Field>
-        ) : null}
+            </FormSection>
+          ) : null}
+        </fieldset>
 
-        <div className="flex justify-end gap-3 md:col-span-2">
-          <Button type="button" variant="secondary" onClick={() => navigate('/courses')}>
-            {t('common.cancel')}
-          </Button>
-          <Button type="submit" loading={save.isPending} disabled={editing && !isDirty}>
-            {editing ? t('courses.form.save') : t('courses.form.submit')}
-          </Button>
-        </div>
-      </Card>
+        <motion.div variants={item} className="mt-5 flex justify-end gap-3">
+          {readOnly ? (
+            <Button type="button" variant="secondary" onClick={() => navigate('/courses')}>
+              {t('common.cancel')}
+            </Button>
+          ) : (
+            <>
+              <Button type="button" variant="secondary" onClick={() => navigate('/my-courses')}>
+                {t('common.cancel')}
+              </Button>
+              <Button type="submit" loading={save.isPending} disabled={editing && !isDirty}>
+                {editing ? t('courses.form.save') : t('courses.form.submit')}
+              </Button>
+            </>
+          )}
+        </motion.div>
+      </motion.form>
     </div>
   );
 }
