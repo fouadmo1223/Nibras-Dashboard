@@ -128,3 +128,57 @@ export async function apiRequest(path, options = {}) {
     return send(path, options);
   }
 }
+
+/** fetch() has no upload-progress event; XMLHttpRequest does, so large uploads (lesson video) use this instead. */
+function sendWithProgress(path, formData, { onProgress, signal } = {}) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('POST', buildUrl(path), true);
+    xhr.withCredentials = true;
+    xhr.setRequestHeader('Accept', 'application/json');
+    xhr.setRequestHeader('Accept-Language', document.documentElement.lang || 'en');
+    if (csrfToken) xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+
+    xhr.upload.onprogress = (event) => {
+      if (onProgress && event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+    };
+    xhr.onerror = () => reject(new ApiError(0, { error: { code: 'NETWORK_ERROR', message: 'Unable to reach the server.' } }));
+    xhr.onload = () => {
+      let payload = null;
+      try {
+        payload = xhr.responseText ? JSON.parse(xhr.responseText) : null;
+      } catch {
+        payload = null;
+      }
+      if (xhr.status < 200 || xhr.status >= 300 || payload?.success === false) reject(new ApiError(xhr.status, payload));
+      else resolve(payload ? { data: payload.data, message: payload.message, meta: payload.meta } : { data: null, message: undefined, meta: undefined });
+    };
+    if (signal) {
+      if (signal.aborted) {
+        xhr.abort();
+        return;
+      }
+      signal.addEventListener('abort', () => xhr.abort());
+    }
+    xhr.send(formData);
+  });
+}
+
+/** Like `apiRequest`, but for a `FormData` upload that reports progress via `onProgress(percent)`. */
+export async function apiUpload(path, formData, { onProgress, signal } = {}) {
+  try {
+    return await sendWithProgress(path, formData, { onProgress, signal });
+  } catch (error) {
+    const canRefresh = error instanceof ApiError && error.status === 401 && shouldRefresh(error);
+    if (!canRefresh) throw error;
+
+    try {
+      await refreshSession();
+    } catch (refreshError) {
+      setCsrfToken(null);
+      expiredListeners.forEach((listener) => listener(refreshError));
+      throw refreshError;
+    }
+    return sendWithProgress(path, formData, { onProgress, signal });
+  }
+}
