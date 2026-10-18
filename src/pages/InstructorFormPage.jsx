@@ -3,12 +3,15 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate, useParams } from 'react-router';
-import { GraduationCap, Globe, UserPlus } from 'lucide-react';
+import { motion } from 'motion/react';
+import { GraduationCap, Globe, Link2, UserCircle2, UserPlus } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Avatar from '@/components/ui/Avatar';
+import BilingualField from '@/components/ui/BilingualField';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import Field from '@/components/ui/Field';
+import FormSection from '@/components/ui/FormSection';
 import Input from '@/components/ui/Input';
 import { useI18n } from '@/i18n/I18nProvider';
 import { applyFieldErrors, errorMessage } from '@/lib/api-errors';
@@ -17,8 +20,8 @@ import { addInstructor, getInstructor, instructorKeys, updateInstructor } from '
 import { toast } from '@/stores/toast-store';
 import { addInstructorSchema, instructorProfileSchema } from './instructor-schema';
 
-const textareaClass =
-  'w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus-visible:ring-2 focus-visible:ring-ring';
+const container = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } };
+const item = { hidden: { opacity: 0, y: 14 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 28 } } };
 
 /** Step one: grant the instructor role by email (`/instructors/new`). Lands on the edit page to fill in the profile. */
 function AddByEmailForm() {
@@ -136,46 +139,46 @@ function EditProfileForm({ id }) {
   const profile = detail.data;
 
   return (
-    <>
-      <Card className="mt-8 flex flex-wrap items-center gap-4 p-6">
-        <Avatar user={profile.user} size="lg" />
-        <div className="min-w-0 flex-1">
-          <p className="font-medium text-foreground">{profile.user.name}</p>
-          <p className="truncate text-sm text-foreground-subtle">{profile.user.email}</p>
-        </div>
-        <span
-          className={cn(
-            'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium',
-            profile.isPublished ? 'bg-success-soft text-success' : 'bg-surface-muted text-foreground-muted',
-          )}
-        >
-          <Globe className="size-3.5" aria-hidden="true" />
-          {profile.isPublished ? t('instructors.status.published') : t('instructors.status.draft')}
-        </span>
-        <Button variant="secondary" loading={publish.isPending} onClick={() => publish.mutate(!profile.isPublished)}>
-          {profile.isPublished ? t('instructors.actions.unpublish') : t('instructors.actions.publish')}
-        </Button>
-      </Card>
+    <motion.div variants={container} initial="hidden" animate="show" className="space-y-5">
+      <motion.div variants={item}>
+        <Card className="mt-8 flex flex-wrap items-center gap-4 p-6">
+          <Avatar user={profile.user} size="lg" />
+          <div className="min-w-0 flex-1">
+            <p className="font-medium text-foreground">{profile.user.name}</p>
+            <p className="truncate text-sm text-foreground-subtle">{profile.user.email}</p>
+          </div>
+          <span
+            className={cn(
+              'inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium',
+              profile.isPublished ? 'bg-success-soft text-success' : 'bg-surface-muted text-foreground-muted',
+            )}
+          >
+            <Globe className="size-3.5" aria-hidden="true" />
+            {profile.isPublished ? t('instructors.status.published') : t('instructors.status.draft')}
+          </span>
+          <Button variant="secondary" loading={publish.isPending} onClick={() => publish.mutate(!profile.isPublished)}>
+            {profile.isPublished ? t('instructors.actions.unpublish') : t('instructors.actions.publish')}
+          </Button>
+        </Card>
+      </motion.div>
 
-      <Card as="form" onSubmit={handleSubmit((values) => save.mutate(values))} noValidate className="mt-6 space-y-5 p-6">
-        {save.isError && save.error.code !== 'VALIDATION_ERROR' ? <Alert tone="error" title={errorMessage(save.error, t)} /> : null}
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label={t('instructors.form.headlineEn')} error={errors.headlineEn?.message}>
-            <Input dir="ltr" {...register('headlineEn')} />
-          </Field>
-          <Field label={t('instructors.form.headlineAr')} error={errors.headlineAr?.message}>
-            <Input dir="rtl" {...register('headlineAr')} />
-          </Field>
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label={t('instructors.form.bioEn')} error={errors.bioEn?.message}>
-            <textarea dir="ltr" rows={4} {...register('bioEn')} className={textareaClass} />
-          </Field>
-          <Field label={t('instructors.form.bioAr')} error={errors.bioAr?.message}>
-            <textarea dir="rtl" rows={4} {...register('bioAr')} className={textareaClass} />
-          </Field>
-        </div>
-        <div className="grid gap-4 md:grid-cols-3">
+      <form onSubmit={handleSubmit((values) => save.mutate(values))} noValidate className="space-y-5">
+        {save.isError && save.error.code !== 'VALIDATION_ERROR' ? (
+          <motion.div variants={item}>
+            <Alert tone="error" title={errorMessage(save.error, t)} />
+          </motion.div>
+        ) : null}
+
+        <FormSection icon={UserCircle2} title={t('instructors.form.sections.profile')} description={t('instructors.form.sections.profileHint')}>
+          <div className="md:col-span-2">
+            <BilingualField label={t('instructors.form.headline')} nameEn="headlineEn" nameAr="headlineAr" register={register} errors={errors} />
+          </div>
+          <div className="md:col-span-2">
+            <BilingualField label={t('instructors.form.bio')} nameEn="bioEn" nameAr="bioAr" register={register} errors={errors} multiline rows={4} />
+          </div>
+        </FormSection>
+
+        <FormSection icon={Link2} title={t('instructors.form.sections.links')} description={t('instructors.form.sections.linksHint')} bodyClassName="md:grid-cols-3">
           <Field label={t('instructors.form.website')} error={errors.websiteUrl?.message}>
             <Input dir="ltr" placeholder="https://" {...register('websiteUrl')} />
           </Field>
@@ -185,17 +188,18 @@ function EditProfileForm({ id }) {
           <Field label={t('instructors.form.x')} error={errors.xUrl?.message}>
             <Input dir="ltr" placeholder="https://x.com/…" {...register('xUrl')} />
           </Field>
-        </div>
-        <div className="flex flex-wrap items-center justify-end gap-3 pt-1">
+        </FormSection>
+
+        <motion.div variants={item} className="flex flex-wrap items-center justify-end gap-3">
           <Button type="button" variant="secondary" onClick={() => navigate('/instructors')}>
             {t('common.cancel')}
           </Button>
           <Button type="submit" loading={save.isPending} disabled={!isDirty}>
             {t('instructors.form.submit')}
           </Button>
-        </div>
-      </Card>
-    </>
+        </motion.div>
+      </form>
+    </motion.div>
   );
 }
 

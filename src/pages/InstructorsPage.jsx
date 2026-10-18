@@ -12,6 +12,8 @@ import { instructorKeys, listInstructors } from '@/services/instructors.service'
 
 const container = { hidden: {}, show: { transition: { staggerChildren: 0.07, delayChildren: 0.05 } } };
 const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transition: { type: 'spring', stiffness: 260, damping: 28 } } };
+const rows_ = { hidden: {}, show: { transition: { staggerChildren: 0.045 } } };
+const row = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
 
 /** Admin instructors: grant the role by email and manage each profile; add/edit live on their own pages. */
 export default function InstructorsPage() {
@@ -22,7 +24,7 @@ export default function InstructorsPage() {
   const publishedCount = rows.filter((r) => r.isPublished).length;
 
   return (
-    <motion.div variants={container} initial="hidden" animate="show" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+    <motion.div variants={container} initial="hidden" animate="show" className="mx-auto w-full max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
       <motion.header variants={item} className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <div className="flex items-center gap-3">
@@ -75,14 +77,14 @@ export default function InstructorsPage() {
             </Button>
           </div>
         ) : (
-          <ul className="divide-y divide-border">
+          <motion.ul variants={rows_} initial="hidden" animate="show" className="divide-y divide-border">
             {rows.map((profile) => (
-              <li key={profile.id}>
+              <motion.li key={profile.id} variants={row}>
                 <Link
                   to={`/instructors/${profile.id}`}
                   className="group flex w-full flex-wrap items-center gap-4 px-6 py-4 text-start transition-colors hover:bg-surface-muted"
                 >
-                  <Avatar user={profile.user} size="md" />
+                  <Avatar user={profile.user} size="lg" />
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground group-hover:text-primary">{profile.user.name}</p>
                     <p className="truncate text-sm text-foreground-subtle">{profile.user.email}</p>
@@ -98,9 +100,9 @@ export default function InstructorsPage() {
                   </span>
                   <ChevronRight className="size-4 shrink-0 text-foreground-subtle rtl:-scale-x-100" aria-hidden="true" />
                 </Link>
-              </li>
+              </motion.li>
             ))}
-          </ul>
+          </motion.ul>
         )}
       </motion.section>
     </motion.div>

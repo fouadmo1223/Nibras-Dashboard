@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
-import { Activity, GraduationCap, ShieldCheck, Users } from 'lucide-react';
+import { Link } from 'react-router';
+import { Activity, BookOpen, Clock, FileEdit, GraduationCap, Rocket, ShieldCheck, Users } from 'lucide-react';
 import { motion, useReducedMotion } from 'motion/react';
 import { useCurrentUser } from '@/features/auth/current-user';
 import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { cn } from '@/lib/cn';
 import { API_URL } from '@/services/api-client';
+import { courseKeys, getMyCourseStats } from '@/services/courses.service';
 import { getApiHealth, getHomeStats, systemKeys } from '@/services/system.service';
 
 const STATUS = {
@@ -44,35 +46,135 @@ function Tile({ icon: Icon, title, tone = 'primary', className, children }) {
   );
 }
 
-/** A count with a soft bar showing its share of the largest count. */
-function Metric({ label, value, max, loading, loadingLabel, format }) {
+/** A standalone count card: icon badge, big number, and its share of the largest count as a bar. */
+function StatCard({ icon: Icon, tone = 'primary', label, value, max, loading, loadingLabel, format, className }) {
   const reduce = useReducedMotion();
   const share = max > 0 ? Math.max(6, Math.round((value / max) * 100)) : 0;
+  const tones = {
+    primary: 'bg-primary-soft text-primary',
+    secondary: 'bg-secondary-soft text-secondary',
+    success: 'bg-success-soft text-success',
+    warning: 'bg-warning-soft text-warning',
+  };
+  const bars = { primary: 'bg-primary', secondary: 'bg-secondary', success: 'bg-success', warning: 'bg-warning' };
   return (
-    <div>
-      <p className="text-sm text-foreground-subtle">{label}</p>
+    <motion.section variants={item} className={cn('flex h-full flex-col rounded-2xl border border-border bg-surface p-6 shadow-elevation-1', className)}>
+      <span className={cn('grid size-10 shrink-0 place-items-center rounded-xl', tones[tone])}>
+        <Icon className="size-5" aria-hidden="true" />
+      </span>
+      <p className="mt-5 text-sm text-foreground-subtle">{label}</p>
       {loading ? (
-        <span className="mt-2 inline-block h-9 w-20 animate-pulse rounded-md bg-surface-muted" aria-label={loadingLabel} />
+        <span className="mt-1 inline-block h-9 w-20 animate-pulse rounded-md bg-surface-muted" aria-label={loadingLabel} />
       ) : (
         <p className="mt-1 text-4xl font-semibold tracking-tight tabular-nums text-foreground">{format.number(value)}</p>
       )}
-      <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-surface-muted" aria-hidden="true">
-        <motion.div
-          className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-          initial={false}
-          animate={{ width: loading ? '0%' : `${share}%` }}
-          transition={{ duration: reduce ? 0 : 0.9, ease: [0.2, 0, 0, 1] }}
+      <div className="mt-auto pt-4">
+        <div className="h-1.5 overflow-hidden rounded-full bg-surface-muted" aria-hidden="true">
+          <motion.div
+            className={cn('h-full rounded-full', bars[tone])}
+            initial={false}
+            animate={{ width: loading ? '0%' : `${share}%` }}
+            transition={{ duration: reduce ? 0 : 0.9, ease: [0.2, 0, 0, 1] }}
+          />
+        </div>
+      </div>
+    </motion.section>
+  );
+}
+
+/** An instructor's own overview: their courses by publish state, and their total enrolled students — never platform-wide numbers. */
+function InstructorOverview() {
+  const { t, format } = useI18n();
+  const user = useCurrentUser();
+  const stats = useQuery({ queryKey: courseKeys.myStats(), queryFn: getMyCourseStats, staleTime: 30_000 });
+  const data = stats.data ?? { totalCourses: 0, publishedCount: 0, pendingCount: 0, draftCount: 0, studentCount: 0 };
+  const max = Math.max(data.totalCourses, data.studentCount, 1);
+
+  return (
+    <motion.div variants={container} initial="hidden" animate="show" className="mx-auto w-full max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+      <motion.header variants={item} className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-sm text-foreground-subtle">{t('overview.greeting', { name: user.name.split(' ')[0] })}</p>
+          <h1 className="mt-1 text-3xl font-semibold tracking-tight text-foreground">{t('overview.title')}</h1>
+          <p className="mt-2 max-w-2xl text-foreground-muted">{t('overview.mine.subtitle')}</p>
+        </div>
+        <Link
+          to="/my-courses"
+          className="inline-flex h-11 items-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground shadow-elevation-1 transition-[background-color,box-shadow,transform] hover:scale-[1.02] hover:bg-primary-hover hover:shadow-elevation-2"
+        >
+          <BookOpen className="size-4" aria-hidden="true" />
+          {t('overview.mine.viewCourses')}
+        </Link>
+      </motion.header>
+
+      {stats.isError ? (
+        <motion.p variants={item} className="mt-4 text-sm text-error">
+          {errorMessage(stats.error, t)}
+        </motion.p>
+      ) : null}
+
+      <div className="mt-8 grid auto-rows-fr gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <StatCard
+          icon={BookOpen}
+          tone="primary"
+          label={t('overview.mine.totalCourses')}
+          value={data.totalCourses}
+          max={max}
+          loading={stats.isPending}
+          loadingLabel={t('overview.mine.loading')}
+          format={format}
+        />
+        <StatCard
+          icon={Rocket}
+          tone="success"
+          label={t('overview.mine.published')}
+          value={data.publishedCount}
+          max={max}
+          loading={stats.isPending}
+          loadingLabel={t('overview.mine.loading')}
+          format={format}
+        />
+        <StatCard
+          icon={Clock}
+          tone="warning"
+          label={t('overview.mine.pending')}
+          value={data.pendingCount}
+          max={max}
+          loading={stats.isPending}
+          loadingLabel={t('overview.mine.loading')}
+          format={format}
+        />
+        <StatCard
+          icon={FileEdit}
+          tone="secondary"
+          label={t('overview.mine.draft')}
+          value={data.draftCount}
+          max={max}
+          loading={stats.isPending}
+          loadingLabel={t('overview.mine.loading')}
+          format={format}
+        />
+        <StatCard
+          icon={Users}
+          tone="primary"
+          label={t('overview.mine.students')}
+          value={data.studentCount}
+          max={max}
+          loading={stats.isPending}
+          loadingLabel={t('overview.mine.loading')}
+          format={format}
+          className="sm:col-span-2 lg:col-span-4"
         />
       </div>
-    </div>
+    </motion.div>
   );
 }
 
 /**
- * Overview bento: greeting, API health, platform counts and the admin's access. Learning,
- * revenue and growth tiles join as their modules ship.
+ * Admin overview bento: greeting, API health, platform-wide counts and the admin's access.
+ * Learning, revenue and growth tiles join as their modules ship.
  */
-export default function OverviewPage() {
+function AdminOverview() {
   const { t, format } = useI18n();
   const user = useCurrentUser();
   const health = useQuery({
@@ -156,42 +258,55 @@ export default function OverviewPage() {
           <p className="mt-auto pt-6 text-sm text-foreground-muted">{t('overview.account.permissions', { count: user.permissions.length })}</p>
         </Tile>
 
-        {/* Platform counts: learners, instructors and published courses, each with its share of the largest. */}
-        <Tile icon={Users} title={t('overview.platform.title')} className="md:col-span-2 lg:col-span-2">
-          <div className="grid h-full gap-6 grid-cols-3">
-            <Metric
-              label={t('overview.platform.learners')}
-              value={learners}
-              max={max}
-              loading={platform.isPending}
-              loadingLabel={t('overview.platform.loading')}
-              format={format}
-            />
-            <Metric
-              label={t('overview.platform.instructors')}
-              value={instructors}
-              max={max}
-              loading={platform.isPending}
-              loadingLabel={t('overview.platform.loading')}
-              format={format}
-            />
-            <Metric
-              label={t('overview.platform.courses')}
-              value={courses}
-              max={max}
-              loading={platform.isPending}
-              loadingLabel={t('overview.platform.loading')}
-              format={format}
-            />
-          </div>
-          {platform.isError ? <p className="mt-4 text-sm text-error">{errorMessage(platform.error, t)}</p> : null}
-        </Tile>
+        {/* Platform counts: learners, instructors and published courses, each its own card with its share of the largest. */}
+        <StatCard
+          icon={Users}
+          tone="primary"
+          label={t('overview.platform.learners')}
+          value={learners}
+          max={max}
+          loading={platform.isPending}
+          loadingLabel={t('overview.platform.loading')}
+          format={format}
+        />
+        <StatCard
+          icon={GraduationCap}
+          tone="secondary"
+          label={t('overview.platform.instructors')}
+          value={instructors}
+          max={max}
+          loading={platform.isPending}
+          loadingLabel={t('overview.platform.loading')}
+          format={format}
+        />
+        <StatCard
+          icon={BookOpen}
+          tone="success"
+          label={t('overview.platform.courses')}
+          value={courses}
+          max={max}
+          loading={platform.isPending}
+          loadingLabel={t('overview.platform.loading')}
+          format={format}
+        />
+        {platform.isError ? (
+          <motion.p variants={item} className="md:col-span-2 lg:col-span-3 -mt-2 text-sm text-error">
+            {errorMessage(platform.error, t)}
+          </motion.p>
+        ) : null}
 
         {/* Says what arrives next, without fake numbers. */}
-        <Tile icon={GraduationCap} title={t('overview.next.title')} className="lg:col-span-3">
+        <Tile icon={Rocket} title={t('overview.next.title')} className="lg:col-span-3">
           <p className="text-sm leading-6 text-foreground-muted">{t('overview.next.body')}</p>
         </Tile>
       </div>
     </motion.div>
   );
+}
+
+/** Admins see platform-wide health and counts; instructors see only their own courses and students. */
+export default function OverviewPage() {
+  const user = useCurrentUser();
+  const isAdmin = user.permissions.includes('courses.manage');
+  return isAdmin ? <AdminOverview /> : <InstructorOverview />;
 }

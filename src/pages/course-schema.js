@@ -19,7 +19,6 @@ export const courseSchema = (t) =>
       price: z.coerce.number(t('validation.priceInvalid')).min(0, t('validation.priceInvalid')),
       compareAtPrice: z.union([z.coerce.number(t('validation.priceInvalid')).min(0, t('validation.priceInvalid')), z.literal('')]).optional(),
       categoryId: z.string().trim().min(1, t('validation.required')),
-      instructorId: z.string().trim().min(1, t('validation.required')),
       isPublished: z.boolean().optional(),
     })
     .refine((data) => !data.compareAtPrice || data.compareAtPrice > data.price, {

@@ -40,9 +40,9 @@ export function SidebarNav({ compact = false, onNavigate }) {
                     )
                   }
                 >
-                  {({ isActive }) => (
+                  {() => (
                     <>
-                      {isActive && <span aria-hidden="true" className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-gradient-to-b from-primary to-secondary" />}
+                      {/* {isActive && <span aria-hidden="true" className="absolute inset-y-2 start-0 w-0.5 rounded-full bg-gradient-to-b from-primary to-secondary" />} */}
                       <Icon className="size-[1.125rem] shrink-0" aria-hidden="true" />
                       <span className={cn('truncate', compact && 'sr-only')}>{t(`nav.${key}`)}</span>
                     </>

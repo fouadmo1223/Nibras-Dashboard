@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { useNavigate, useParams } from 'react-router';
-import { ChevronDown, ChevronUp, Clapperboard, HelpCircle, Layers, Plus, Trash2 } from 'lucide-react';
+import { Link, useLocation, useNavigate, useParams } from 'react-router';
+import { ChevronDown, ChevronUp, Clapperboard, HelpCircle, Layers, Plus, Settings2, Trash2, Upload } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
+import BilingualInput from '@/components/ui/BilingualInput';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
 import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { cn } from '@/lib/cn';
-import { courseKeys, getCourse, getCourseCurriculum, saveCourseCurriculum } from '@/services/courses.service';
+import { courseKeys, getCourse, getCourseCurriculum, saveCourseCurriculum, uploadLessonVideo } from '@/services/courses.service';
 import { toast } from '@/stores/toast-store';
 
 let localIdSeq = 0;
@@ -102,12 +103,63 @@ function ReorderButtons({ index, length, onMove, labels }) {
   );
 }
 
+/** File-picker button that uploads a video for one already-saved lesson and reports back its URL. */
+function LessonVideoUpload({ courseId, lessonId, hasVideo, onUploaded }) {
+  const { t } = useI18n();
+  const inputRef = useRef(null);
+  const [progress, setProgress] = useState(0);
+
+  const upload = useMutation({
+    mutationFn: (file) => uploadLessonVideo(courseId, lessonId, file, setProgress),
+    onSuccess: (result) => {
+      toast.success(t('curriculum.lessonUploadSuccess'));
+      onUploaded(result.data.videoUrl);
+    },
+    onError: (error) => toast.error(errorMessage(error, t)),
+    onSettled: () => setProgress(0),
+  });
+
+  return (
+    <div className="flex shrink-0 items-center">
+      <input
+        ref={inputRef}
+        type="file"
+        accept="video/mp4,video/webm"
+        className="hidden"
+        onChange={(e) => {
+          const file = e.target.files?.[0];
+          e.target.value = '';
+          if (file) upload.mutate(file);
+        }}
+      />
+      <Button
+        type="button"
+        variant="secondary"
+        size="sm"
+        loading={upload.isPending}
+        disabled={!lessonId}
+        title={!lessonId ? t('curriculum.lessonUploadHint') : undefined}
+        onClick={() => inputRef.current?.click()}
+      >
+        {upload.isPending ? (
+          t('curriculum.lessonUploadProgress', { percent: progress })
+        ) : (
+          <>
+            <Upload className="size-3.5" aria-hidden="true" />
+            {hasVideo ? t('curriculum.lessonUploadReplace') : t('curriculum.lessonUpload')}
+          </>
+        )}
+      </Button>
+    </div>
+  );
+}
+
 /**
  * The editable curriculum tree. Owns `sections` as local state, lazily seeded once from
  * `initialSections` (a fresh instance of this component mounts per course id, so there's no
  * stale-data risk — no effect needed to "sync" it).
  */
-function CurriculumEditor({ courseId, courseTitle, initialSections, onSaved }) {
+function CurriculumEditor({ courseId, courseTitle, initialSections, onSaved, quizBasePath }) {
   const { t } = useI18n();
   const navigate = useNavigate();
   const [sections, setSections] = useState(() => fromApi(initialSections));
@@ -131,6 +183,11 @@ function CurriculumEditor({ courseId, courseTitle, initialSections, onSaved }) {
   const setSection = (index, patch) => update((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
   const setLesson = (sectionIndex, lessonIndex, patch) =>
     update((prev) =>
+      prev.map((s, i) => (i !== sectionIndex ? s : { ...s, lessons: s.lessons.map((l, j) => (j === lessonIndex ? { ...l, ...patch } : l)) })),
+    );
+  // The upload endpoint already persists the new videoUrl server-side, so reflect it locally without marking the form dirty.
+  const setLessonQuietly = (sectionIndex, lessonIndex, patch) =>
+    setSections((prev) =>
       prev.map((s, i) => (i !== sectionIndex ? s : { ...s, lessons: s.lessons.map((l, j) => (j === lessonIndex ? { ...l, ...patch } : l)) })),
     );
 
@@ -160,22 +217,16 @@ function CurriculumEditor({ courseId, courseTitle, initialSections, onSaved }) {
                 onMove={(i, dir) => update((prev) => move(prev, i, dir))}
                 labels={{ earlier: t('curriculum.sectionMoveEarlier'), later: t('curriculum.sectionMoveLater') }}
               />
-              <div className="grid min-w-0 flex-1 gap-3 sm:grid-cols-2">
-                <input
-                  dir="ltr"
-                  placeholder={t('curriculum.sectionTitleEn')}
-                  value={section.titleEn}
-                  onChange={(e) => setSection(sectionIndex, { titleEn: e.target.value })}
-                  className={cn(inputClass, 'font-medium')}
-                />
-                <input
-                  dir="rtl"
-                  placeholder={t('curriculum.sectionTitleAr')}
-                  value={section.titleAr}
-                  onChange={(e) => setSection(sectionIndex, { titleAr: e.target.value })}
-                  className={cn(inputClass, 'font-medium')}
-                />
-              </div>
+              <BilingualInput
+                className="min-w-0 flex-1"
+                inputClassNameOverride={cn(inputClass, 'font-medium')}
+                placeholderEn={t('curriculum.sectionTitleEn')}
+                placeholderAr={t('curriculum.sectionTitleAr')}
+                valueEn={section.titleEn}
+                valueAr={section.titleAr}
+                onChangeEn={(v) => setSection(sectionIndex, { titleEn: v })}
+                onChangeAr={(v) => setSection(sectionIndex, { titleAr: v })}
+              />
               <button
                 type="button"
                 onClick={() => update((prev) => prev.filter((_, i) => i !== sectionIndex))}
@@ -219,31 +270,35 @@ function CurriculumEditor({ courseId, courseTitle, initialSections, onSaved }) {
                     ))}
                   </div>
 
-                  <div className="grid min-w-0 flex-1 gap-2 sm:grid-cols-2">
-                    <input
-                      dir="ltr"
-                      placeholder={t('curriculum.lessonTitleEn')}
-                      value={lesson.titleEn}
-                      onChange={(e) => setLesson(sectionIndex, lessonIndex, { titleEn: e.target.value })}
-                      className={inputClass}
-                    />
-                    <input
-                      dir="rtl"
-                      placeholder={t('curriculum.lessonTitleAr')}
-                      value={lesson.titleAr}
-                      onChange={(e) => setLesson(sectionIndex, lessonIndex, { titleAr: e.target.value })}
-                      className={inputClass}
+                  <div className="grid min-w-0 flex-1 gap-2">
+                    <BilingualInput
+                      inputClassNameOverride={inputClass}
+                      placeholderEn={t('curriculum.lessonTitleEn')}
+                      placeholderAr={t('curriculum.lessonTitleAr')}
+                      valueEn={lesson.titleEn}
+                      valueAr={lesson.titleAr}
+                      onChangeEn={(v) => setLesson(sectionIndex, lessonIndex, { titleEn: v })}
+                      onChangeAr={(v) => setLesson(sectionIndex, lessonIndex, { titleAr: v })}
                     />
                     {lesson.type === 'VIDEO' ? (
                       <>
-                        <input
-                          dir="ltr"
-                          type="url"
-                          placeholder={t('curriculum.lessonVideoUrl')}
-                          value={lesson.videoUrl}
-                          onChange={(e) => setLesson(sectionIndex, lessonIndex, { videoUrl: e.target.value })}
-                          className={cn(inputClass, 'sm:col-span-2')}
-                        />
+                        <div className="flex items-center gap-2 sm:col-span-2">
+                          <input
+                            dir="ltr"
+                            type="url"
+                            placeholder={t('curriculum.lessonVideoUrl')}
+                            value={lesson.videoUrl}
+                            onChange={(e) => setLesson(sectionIndex, lessonIndex, { videoUrl: e.target.value })}
+                            className={inputClass}
+                          />
+                          <LessonVideoUpload
+                            courseId={courseId}
+                            lessonId={lesson.id}
+                            hasVideo={Boolean(lesson.videoUrl)}
+                            onUploaded={(url) => setLessonQuietly(sectionIndex, lessonIndex, { videoUrl: url })}
+                          />
+                        </div>
+                        {!lesson.id ? <p className="text-xs text-foreground-subtle sm:col-span-2">{t('curriculum.lessonVideoUrlHint')}</p> : null}
                         <input
                           dir="ltr"
                           type="number"
@@ -254,6 +309,18 @@ function CurriculumEditor({ courseId, courseTitle, initialSections, onSaved }) {
                           className={cn(inputClass, 'w-32')}
                         />
                       </>
+                    ) : null}
+                    {lesson.type === 'QUIZ' ? (
+                      <div className="sm:col-span-2">
+                        {lesson.id ? (
+                          <Button as={Link} to={`${quizBasePath}/${courseId}/lessons/${lesson.id}/quiz`} variant="secondary" size="sm">
+                            <Settings2 className="size-3.5" aria-hidden="true" />
+                            {t('curriculum.lessonQuizConfigure')}
+                          </Button>
+                        ) : (
+                          <p className="text-xs text-foreground-subtle">{t('curriculum.lessonQuizHint')}</p>
+                        )}
+                      </div>
                     ) : null}
                   </div>
 
@@ -307,6 +374,8 @@ export default function CourseCurriculumPage() {
   const { id } = useParams();
   const { t } = useI18n();
   const queryClient = useQueryClient();
+  const location = useLocation();
+  const quizBasePath = location.pathname.startsWith('/my-courses') ? '/my-courses' : '/courses';
 
   const course = useQuery({ queryKey: courseKeys.detail(id), queryFn: () => getCourse(id) });
   const curriculum = useQuery({ queryKey: courseKeys.curriculum(id), queryFn: () => getCourseCurriculum(id) });
@@ -335,6 +404,7 @@ export default function CourseCurriculumPage() {
       courseTitle={course.data.titleEn}
       initialSections={curriculum.data}
       onSaved={() => queryClient.invalidateQueries({ queryKey: courseKeys.curriculum(id) })}
+      quizBasePath={quizBasePath}
     />
   );
 }
