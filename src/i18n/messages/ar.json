@@ -32,7 +32,8 @@
     "instructors": "المدرّبون",
     "courses": "الدورات",
     "myCourses": "دوراتي",
-    "orders": "الطلبات"
+    "orders": "الطلبات",
+    "coupons": "الكوبونات"
   },
   "search": {
     "open": "ابحث أو انتقل إلى…",
@@ -438,6 +439,52 @@
     "filters": {
       "status": "الحالة",
       "all": "الكل"
+    }
+  },
+  "coupons": {
+    "title": "الكوبونات",
+    "subtitle": "رموز الخصم التي يمكن للطلاب استخدامها عند إنشاء طلب.",
+    "loading": "جارٍ تحميل الكوبونات",
+    "new": "كوبون جديد",
+    "newTitle": "كوبون جديد",
+    "editTitle": "تعديل الكوبون",
+    "empty": {
+      "title": "لا توجد كوبونات بعد",
+      "body": "أنشئ كوبونًا ليتمكن الطلاب من استخدام خصم عند الدفع."
+    },
+    "type": {
+      "PERCENT": "نسبة مئوية",
+      "FIXED": "مبلغ ثابت"
+    },
+    "status": {
+      "active": "نشط",
+      "inactive": "غير نشط",
+      "expired": "منتهي الصلاحية",
+      "exhausted": "استُنفد بالكامل"
+    },
+    "valuePercent": "خصم {value}%",
+    "valueFixed": "خصم ${value}",
+    "redemptions": "استُخدم {count} / {max}",
+    "expiresOn": "ينتهي {date}",
+    "actions": {
+      "edit": "تعديل",
+      "activate": "تفعيل",
+      "deactivate": "إلغاء التفعيل"
+    },
+    "form": {
+      "code": "الرمز",
+      "codeHint": "أحرف إنجليزية كبيرة وأرقام وشرطات وشرطات سفلية.",
+      "codeLocked": "لا يمكن تغيير الرمز بعد إنشاء الكوبون.",
+      "type": "نوع الخصم",
+      "valuePercent": "نسبة الخصم",
+      "valueFixed": "مبلغ الخصم (دولار)",
+      "maxRedemptions": "حد الاستخدام",
+      "maxRedemptionsHint": "اتركه فارغًا لاستخدام غير محدود.",
+      "expiresAt": "تاريخ الانتهاء",
+      "expiresAtHint": "اتركه فارغًا لعدم الانتهاء.",
+      "isActive": "نشط",
+      "submit": "إنشاء الكوبون",
+      "save": "حفظ التغييرات"
     }
   },
   "myCourses": {

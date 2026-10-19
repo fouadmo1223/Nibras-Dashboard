@@ -32,7 +32,8 @@
     "instructors": "Instructors",
     "courses": "Courses",
     "myCourses": "My courses",
-    "orders": "Orders"
+    "orders": "Orders",
+    "coupons": "Coupons"
   },
   "search": {
     "open": "Search or jump to…",
@@ -434,6 +435,52 @@
     "filters": {
       "status": "Status",
       "all": "All"
+    }
+  },
+  "coupons": {
+    "title": "Coupons",
+    "subtitle": "Discount codes students can apply when placing an order.",
+    "loading": "Loading coupons",
+    "new": "New coupon",
+    "newTitle": "New coupon",
+    "editTitle": "Edit coupon",
+    "empty": {
+      "title": "No coupons yet",
+      "body": "Create one to let students apply a discount at checkout."
+    },
+    "type": {
+      "PERCENT": "Percent off",
+      "FIXED": "Fixed amount off"
+    },
+    "status": {
+      "active": "Active",
+      "inactive": "Inactive",
+      "expired": "Expired",
+      "exhausted": "Fully redeemed"
+    },
+    "valuePercent": "{value}% off",
+    "valueFixed": "${value} off",
+    "redemptions": "{count} / {max} used",
+    "expiresOn": "expires {date}",
+    "actions": {
+      "edit": "Edit",
+      "activate": "Activate",
+      "deactivate": "Deactivate"
+    },
+    "form": {
+      "code": "Code",
+      "codeHint": "Upper-case letters, numbers, dashes and underscores.",
+      "codeLocked": "The code can't be changed after a coupon is created.",
+      "type": "Discount type",
+      "valuePercent": "Percent off",
+      "valueFixed": "Amount off (USD)",
+      "maxRedemptions": "Redemption limit",
+      "maxRedemptionsHint": "Leave empty for unlimited.",
+      "expiresAt": "Expires on",
+      "expiresAtHint": "Leave empty for no expiry.",
+      "isActive": "Active",
+      "submit": "Create coupon",
+      "save": "Save changes"
     }
   },
   "myCourses": {

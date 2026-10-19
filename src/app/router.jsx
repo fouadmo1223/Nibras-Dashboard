@@ -72,6 +72,7 @@ export const routes = [
             ],
           },
           { path: 'orders', lazy: page(() => import('@/pages/OrdersPage')), handle: { crumb: 'nav.orders' } },
+          { path: 'coupons', lazy: page(() => import('@/pages/CouponsPage')), handle: { crumb: 'nav.coupons' } },
           { path: 'settings', lazy: page(() => import('@/pages/SettingsPage')), handle: { crumb: 'nav.settings' } },
           { path: '*', element: <NotFoundPage /> },
         ],
