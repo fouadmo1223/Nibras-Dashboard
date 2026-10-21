@@ -517,6 +517,12 @@
       "status": "Page {page} of {totalPages}"
     }
   },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications yet.",
+    "unreadBadge": "Notifications, {count} unread"
+  },
   "myCourses": {
     "title": "My courses",
     "subtitle": "Courses you create and teach.",

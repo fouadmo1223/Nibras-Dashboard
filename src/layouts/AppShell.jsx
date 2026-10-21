@@ -9,6 +9,7 @@ import { cn } from '@/lib/cn';
 import { usePreferences } from '@/stores/preferences-store';
 import Breadcrumbs from './Breadcrumbs';
 import CommandPalette from './CommandPalette';
+import NotificationBell from './NotificationBell';
 import Sidebar, { SidebarNav } from './Sidebar';
 import UserMenu from './UserMenu';
 
@@ -136,6 +137,7 @@ export default function AppShell() {
             </button>
             <LanguageMenu />
             <ThemeMenu />
+            <NotificationBell />
             <span className="mx-1 h-6 w-px bg-border" aria-hidden="true" />
             <UserMenu onSignOut={openSignOut} />
           </div>

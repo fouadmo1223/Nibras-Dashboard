@@ -90,7 +90,7 @@ export default function DatePicker({ value, onChange, placeholder, label, classN
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: -4, scale: 0.98, transition: { duration: 0.12 } }}
             transition={{ type: 'spring', stiffness: 520, damping: 34 }}
-            className="absolute start-0 top-full z-50 mt-2 w-72 origin-top-start rounded-xl border border-border bg-surface-raised p-3 shadow-elevation-3"
+            className="absolute end-0 top-full z-50 mt-2 w-72 origin-top-right rounded-xl border border-border bg-surface-raised p-3 shadow-elevation-3 rtl:origin-top-left"
           >
             <div className="flex items-center justify-between">
               <button

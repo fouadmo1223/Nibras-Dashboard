@@ -521,6 +521,12 @@
       "status": "صفحة {page} من {totalPages}"
     }
   },
+  "notifications": {
+    "title": "الإشعارات",
+    "markAllRead": "تمييز الكل كمقروء",
+    "empty": "لا توجد إشعارات بعد.",
+    "unreadBadge": "الإشعارات، {count} غير مقروء"
+  },
   "myCourses": {
     "title": "دوراتي",
     "subtitle": "الدورات التي تنشئها وتدرّسها.",
