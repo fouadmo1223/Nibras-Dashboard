@@ -1,12 +1,14 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'motion/react';
-import { Check, Pencil, Plus, Ticket, X } from 'lucide-react';
+import { Check, DollarSign, Hash, Pencil, Percent, Plus, Ticket, X } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
+import DatePicker from '@/components/ui/DatePicker';
 import Field from '@/components/ui/Field';
-import Input, { inputClassName } from '@/components/ui/Input';
+import Input from '@/components/ui/Input';
+import { Segmented } from '@/features/preferences/PreferenceControls';
 import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { cn } from '@/lib/cn';
@@ -87,28 +89,40 @@ function CouponDialog({ open, editing, onClose, onSubmit, loading }) {
 
         <div className="mt-5 space-y-4">
           <Field label={t('coupons.form.code')} hint={editing ? t('coupons.form.codeLocked') : t('coupons.form.codeHint')}>
-            <Input
-              ref={codeRef}
-              dir="ltr"
-              placeholder="WELCOME10"
-              value={form.code}
-              disabled={Boolean(editing)}
-              onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))}
+            <div className="relative">
+              <Hash className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-foreground-subtle" aria-hidden="true" />
+              <Input
+                ref={codeRef}
+                dir="ltr"
+                placeholder="WELCOME10"
+                value={form.code}
+                disabled={Boolean(editing)}
+                onChange={(e) => setForm((f) => ({ ...f, code: e.target.value.toUpperCase() }))}
+                className="ps-10 font-mono tracking-wide"
+              />
+            </div>
+          </Field>
+
+          <Field label={t('coupons.form.type')}>
+            <Segmented
+              label={t('coupons.form.type')}
+              value={form.type}
+              onChange={(type) => setForm((f) => ({ ...f, type }))}
+              className="w-full"
+              options={[
+                { id: 'PERCENT', label: t('coupons.type.PERCENT'), icon: Percent },
+                { id: 'FIXED', label: t('coupons.type.FIXED'), icon: DollarSign },
+              ]}
             />
           </Field>
 
-          <div className="grid grid-cols-2 gap-3">
-            <Field label={t('coupons.form.type')}>
-              <select
-                className={inputClassName}
-                value={form.type}
-                onChange={(e) => setForm((f) => ({ ...f, type: e.target.value }))}
-              >
-                <option value="PERCENT">{t('coupons.type.PERCENT')}</option>
-                <option value="FIXED">{t('coupons.type.FIXED')}</option>
-              </select>
-            </Field>
-            <Field label={form.type === 'PERCENT' ? t('coupons.form.valuePercent') : t('coupons.form.valueFixed')}>
+          <Field label={form.type === 'PERCENT' ? t('coupons.form.valuePercent') : t('coupons.form.valueFixed')}>
+            <div className="relative">
+              {form.type === 'PERCENT' ? (
+                <Percent className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-foreground-subtle" aria-hidden="true" />
+              ) : (
+                <DollarSign className="pointer-events-none absolute start-3.5 top-1/2 size-4 -translate-y-1/2 text-foreground-subtle" aria-hidden="true" />
+              )}
               <Input
                 dir="ltr"
                 type="number"
@@ -117,9 +131,10 @@ function CouponDialog({ open, editing, onClose, onSubmit, loading }) {
                 step={form.type === 'PERCENT' ? '1' : '0.01'}
                 value={form.value}
                 onChange={(e) => setForm((f) => ({ ...f, value: e.target.value }))}
+                className="ps-10"
               />
-            </Field>
-          </div>
+            </div>
+          </Field>
 
           <div className="grid grid-cols-2 gap-3">
             <Field label={t('coupons.form.maxRedemptions')} hint={t('coupons.form.maxRedemptionsHint')}>
@@ -127,12 +142,18 @@ function CouponDialog({ open, editing, onClose, onSubmit, loading }) {
                 dir="ltr"
                 type="number"
                 min="1"
+                placeholder="∞"
                 value={form.maxRedemptions}
                 onChange={(e) => setForm((f) => ({ ...f, maxRedemptions: e.target.value }))}
               />
             </Field>
             <Field label={t('coupons.form.expiresAt')} hint={t('coupons.form.expiresAtHint')}>
-              <Input dir="ltr" type="date" value={form.expiresAt} onChange={(e) => setForm((f) => ({ ...f, expiresAt: e.target.value }))} />
+              <DatePicker
+                value={form.expiresAt}
+                onChange={(expiresAt) => setForm((f) => ({ ...f, expiresAt }))}
+                placeholder={t('coupons.form.expiresAtPlaceholder')}
+                label={t('coupons.form.expiresAt')}
+              />
             </Field>
           </div>
 
@@ -167,6 +188,7 @@ export default function CouponsPage() {
   const coupons = useQuery({ queryKey: couponKeys.admin(), queryFn: listCoupons });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editing, setEditing] = useState(null);
+  const [now] = useState(() => Date.now());
 
   const refresh = () => queryClient.invalidateQueries({ queryKey: couponKeys.all });
 
@@ -266,12 +288,21 @@ export default function CouponsPage() {
           ) : (
             <motion.ul variants={rows_} initial="hidden" animate="show" className="divide-y divide-border">
               {rows.map((c) => {
-                const expired = c.expiresAt ? new Date(c.expiresAt).getTime() < Date.now() : false;
+                const expired = c.expiresAt ? new Date(c.expiresAt).getTime() < now : false;
                 const exhausted = c.maxRedemptions !== null && c.redemptionCount >= c.maxRedemptions;
                 return (
                   <motion.li key={c.id} variants={row} className="flex flex-wrap items-center gap-x-4 gap-y-3 px-6 py-4">
+                    <span
+                      className={cn(
+                        'grid size-10 shrink-0 place-items-center rounded-xl',
+                        c.type === 'PERCENT' ? 'bg-primary-soft text-primary' : 'bg-secondary-soft text-secondary',
+                      )}
+                      aria-hidden="true"
+                    >
+                      {c.type === 'PERCENT' ? <Percent className="size-4.5" /> : <DollarSign className="size-4.5" />}
+                    </span>
                     <div className="min-w-48 flex-1">
-                      <p dir="ltr" className="text-start font-mono font-medium text-foreground">
+                      <p className="text-start font-mono font-medium tracking-wide text-foreground">
                         {c.code}
                       </p>
                       <p className="mt-0.5 text-sm text-foreground-subtle">
@@ -292,6 +323,7 @@ export default function CouponsPage() {
                               : 'bg-success-soft text-success',
                         )}
                       >
+                        <span className={cn('size-1.5 rounded-full', !c.isActive ? 'bg-foreground-subtle' : expired || exhausted ? 'bg-warning' : 'bg-success')} aria-hidden="true" />
                         {!c.isActive ? t('coupons.status.inactive') : expired ? t('coupons.status.expired') : exhausted ? t('coupons.status.exhausted') : t('coupons.status.active')}
                       </span>
                       <Button variant="secondary" size="sm" onClick={() => openEdit(c)}>

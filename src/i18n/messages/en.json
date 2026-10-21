@@ -12,7 +12,12 @@
     "backToOverview": "Back to overview",
     "dismissNotification": "Dismiss notification",
     "offline": "We couldn’t reach {brand}. Check your connection and try again.",
-    "genericError": "Something went wrong. Please try again."
+    "genericError": "Something went wrong. Please try again.",
+    "previous": "Previous month",
+    "next": "Next month",
+    "clear": "Clear",
+    "today": "Today",
+    "all": "All"
   },
   "nav": {
     "main": "Main navigation",
@@ -33,7 +38,8 @@
     "courses": "Courses",
     "myCourses": "My courses",
     "orders": "Orders",
-    "coupons": "Coupons"
+    "coupons": "Coupons",
+    "reviews": "Reviews"
   },
   "search": {
     "open": "Search or jump to…",
@@ -478,9 +484,37 @@
       "maxRedemptionsHint": "Leave empty for unlimited.",
       "expiresAt": "Expires on",
       "expiresAtHint": "Leave empty for no expiry.",
+      "expiresAtPlaceholder": "No expiry",
       "isActive": "Active",
       "submit": "Create coupon",
       "save": "Save changes"
+    }
+  },
+  "reviews": {
+    "title": "Reviews",
+    "subtitle": "Every course review, platform-wide.",
+    "loading": "Loading reviews",
+    "onCourse": "on",
+    "remove": "Remove",
+    "removeConfirmTitle": "Remove this review?",
+    "removeConfirmDescription": "The student will no longer see it, and can leave a new one later.",
+    "empty": {
+      "title": "No reviews yet",
+      "body": "Reviews appear here once students start rating courses.",
+      "filteredTitle": "No reviews match these filters",
+      "filteredBody": "Try a different rating, course, instructor or reviewer."
+    },
+    "filters": {
+      "rating": "Rating",
+      "course": "Course",
+      "instructor": "Instructor",
+      "reviewer": "Search reviewer…",
+      "ratingOption": "{rating} ★"
+    },
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "status": "Page {page} of {totalPages}"
     }
   },
   "myCourses": {
@@ -492,6 +526,11 @@
     },
     "editCurriculum": "Edit curriculum",
     "editDetails": "Edit details",
+    "reviewCount": {
+      "one": "({count} review)",
+      "other": "({count} reviews)"
+    },
+    "noReviews": "No reviews yet",
     "removals": {
       "title": "Removal notices",
       "dismiss": "Dismiss",

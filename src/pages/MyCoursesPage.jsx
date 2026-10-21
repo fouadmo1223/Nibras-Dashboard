@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'motion/react';
 import { Link } from 'react-router';
-import { BookOpen, ChevronRight, Clock, Globe, Pencil, Plus, X } from 'lucide-react';
+import { BookOpen, ChevronRight, Clock, Globe, Pencil, Plus, Star, X } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -112,7 +112,22 @@ export default function MyCoursesPage() {
                   )}
                   <div className="min-w-0 flex-1">
                     <p className="font-medium text-foreground group-hover:text-primary">{c.titleEn}</p>
-                    <p className="mt-0.5 text-sm text-foreground-subtle">{c.category.nameEn}</p>
+                    <p className="mt-0.5 flex items-center gap-1.5 text-sm text-foreground-subtle">
+                      <span>{c.category.nameEn}</span>
+                      {c.reviewCount > 0 ? (
+                        <span className="inline-flex items-center gap-1">
+                          <span aria-hidden="true">·</span>
+                          <Star className="size-3.5 fill-warning text-warning" aria-hidden="true" />
+                          <span className="font-medium text-foreground">{c.averageRating.toFixed(1)}</span>
+                          <span>{t('myCourses.reviewCount', { count: c.reviewCount })}</span>
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1">
+                          <span aria-hidden="true">·</span>
+                          {t('myCourses.noReviews')}
+                        </span>
+                      )}
+                    </p>
                   </div>
                 </Link>
                 <div className="ms-auto flex shrink-0 items-center gap-4">

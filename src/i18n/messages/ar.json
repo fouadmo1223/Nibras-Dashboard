@@ -12,7 +12,12 @@
     "backToOverview": "العودة إلى النظرة العامة",
     "dismissNotification": "إغلاق الإشعار",
     "offline": "تعذّر الوصول إلى {brand}. تحقّق من اتصالك وحاول مرة أخرى.",
-    "genericError": "حدث خطأ ما. حاول مرة أخرى."
+    "genericError": "حدث خطأ ما. حاول مرة أخرى.",
+    "previous": "الشهر السابق",
+    "next": "الشهر التالي",
+    "clear": "مسح",
+    "today": "اليوم",
+    "all": "الكل"
   },
   "nav": {
     "main": "التنقّل الرئيسي",
@@ -33,7 +38,8 @@
     "courses": "الدورات",
     "myCourses": "دوراتي",
     "orders": "الطلبات",
-    "coupons": "الكوبونات"
+    "coupons": "الكوبونات",
+    "reviews": "التقييمات"
   },
   "search": {
     "open": "ابحث أو انتقل إلى…",
@@ -482,9 +488,37 @@
       "maxRedemptionsHint": "اتركه فارغًا لاستخدام غير محدود.",
       "expiresAt": "تاريخ الانتهاء",
       "expiresAtHint": "اتركه فارغًا لعدم الانتهاء.",
+      "expiresAtPlaceholder": "بلا انتهاء",
       "isActive": "نشط",
       "submit": "إنشاء الكوبون",
       "save": "حفظ التغييرات"
+    }
+  },
+  "reviews": {
+    "title": "التقييمات",
+    "subtitle": "كل تقييمات الدورات، على مستوى المنصة.",
+    "loading": "جارٍ تحميل التقييمات",
+    "onCourse": "على",
+    "remove": "إزالة",
+    "removeConfirmTitle": "إزالة هذا التقييم؟",
+    "removeConfirmDescription": "لن يراه الطالب بعد الآن، ويمكنه إضافة تقييم جديد لاحقًا.",
+    "empty": {
+      "title": "لا توجد تقييمات بعد",
+      "body": "تظهر التقييمات هنا بمجرد أن يبدأ الطلاب بتقييم الدورات.",
+      "filteredTitle": "لا توجد تقييمات تطابق هذه الفلاتر",
+      "filteredBody": "جرّب تقييمًا أو دورة أو مدرّبًا أو مستخدمًا مختلفًا."
+    },
+    "filters": {
+      "rating": "التقييم",
+      "course": "الدورة",
+      "instructor": "المدرّب",
+      "reviewer": "ابحث عن مُقيِّم…",
+      "ratingOption": "{rating} ★"
+    },
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "status": "صفحة {page} من {totalPages}"
     }
   },
   "myCourses": {
@@ -496,6 +530,15 @@
     },
     "editCurriculum": "تعديل المنهج",
     "editDetails": "تعديل التفاصيل",
+    "reviewCount": {
+      "zero": "(بلا تقييمات)",
+      "one": "(تقييم واحد)",
+      "two": "(تقييمان)",
+      "few": "({count} تقييمات)",
+      "many": "({count} تقييمًا)",
+      "other": "({count} تقييم)"
+    },
+    "noReviews": "لا توجد تقييمات بعد",
     "removals": {
       "title": "إشعارات الإزالة",
       "dismiss": "إغلاق",
