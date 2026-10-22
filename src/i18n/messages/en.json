@@ -17,7 +17,10 @@
     "next": "Next month",
     "clear": "Clear",
     "today": "Today",
-    "all": "All"
+    "all": "All",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save changes"
   },
   "nav": {
     "main": "Main navigation",
@@ -40,7 +43,10 @@
     "orders": "Orders",
     "coupons": "Coupons",
     "reviews": "Reviews",
-    "analytics": "Analytics"
+    "analytics": "Analytics",
+    "users": "Users",
+    "roles": "Roles & Permissions",
+    "auditLog": "Audit Log"
   },
   "search": {
     "open": "Search or jump to…",
@@ -74,7 +80,28 @@
     "SUPER_ADMIN": "Super Admin",
     "ADMIN": "Admin",
     "INSTRUCTOR": "Instructor",
-    "STUDENT": "Student"
+    "STUDENT": "Student",
+    "title": "Roles & Permissions",
+    "subtitle": "What each role can do, and who holds it.",
+    "new": "New role",
+    "system": "System",
+    "noPermissions": "No permissions granted",
+    "userCount": {
+      "one": "{count} user",
+      "other": "{count} users"
+    },
+    "removeConfirmTitle": "Delete “{name}”?",
+    "removeConfirmDescription": "This can’t be undone. A role that’s still assigned to a user can’t be deleted.",
+    "form": {
+      "createTitle": "New role",
+      "editTitle": "Edit role",
+      "key": "Key",
+      "keyHint": "Upper-case letters, numbers and underscores — can’t be changed later.",
+      "name": "Name",
+      "description": "Description",
+      "permissions": "Permissions",
+      "create": "Create role"
+    }
   },
   "theme": {
     "label": "Theme",
@@ -558,6 +585,41 @@
       "byRevenue": "By revenue",
       "empty": "No course activity yet."
     }
+  },
+  "users": {
+    "title": "Users",
+    "subtitle": "Every account on the platform — search, filter, suspend and assign roles.",
+    "manageRoles": "Manage roles",
+    "suspend": "Suspend",
+    "reactivate": "Reactivate",
+    "empty": {
+      "title": "No users match these filters."
+    },
+    "filters": {
+      "role": "Role",
+      "status": "Status",
+      "search": "Search name or email…"
+    },
+    "status": {
+      "ACTIVE": "Active",
+      "SUSPENDED": "Suspended"
+    },
+    "rolesDialog": {
+      "title": "{name}’s roles"
+    },
+    "suspendDialog": {
+      "title": "Suspend {name}?",
+      "body": "They’ll be signed out everywhere immediately. Give a reason other admins will see.",
+      "reasonLabel": "Reason",
+      "reasonPlaceholder": "Why is this account being suspended?"
+    }
+  },
+  "auditLog": {
+    "title": "Audit Log",
+    "subtitle": "Every recorded administrative action, newest first.",
+    "filterPlaceholder": "Filter by action, e.g. user.",
+    "empty": "No matching activity.",
+    "systemActor": "System"
   },
   "myCourses": {
     "title": "My courses",

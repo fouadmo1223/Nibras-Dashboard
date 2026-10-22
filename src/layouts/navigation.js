@@ -1,4 +1,4 @@
-import { BarChart3, BookOpen, ClipboardList, FolderTree, GraduationCap, LayoutDashboard, Settings, Star, Ticket } from 'lucide-react';
+import { BarChart3, BookOpen, ClipboardList, FolderTree, GraduationCap, LayoutDashboard, ScrollText, Settings, Shield, Star, Ticket, Users } from 'lucide-react';
 
 /**
  * Sidebar / command-palette navigation. Admin modules add their entries here as they
@@ -22,7 +22,15 @@ export const NAV_GROUPS = [
       { key: 'myCourses', to: '/my-courses', icon: BookOpen, show: (granted) => granted.has('courses.manage.own') && !granted.has('courses.manage') },
     ],
   },
-  { key: 'system', items: [{ key: 'settings', to: '/settings', icon: Settings }] },
+  {
+    key: 'system',
+    items: [
+      { key: 'users', to: '/users', icon: Users, permission: 'users.read' },
+      { key: 'roles', to: '/roles', icon: Shield, permission: 'roles.read' },
+      { key: 'auditLog', to: '/audit-log', icon: ScrollText, permission: 'audit-logs.read' },
+      { key: 'settings', to: '/settings', icon: Settings },
+    ],
+  },
 ];
 
 export function visibleNavGroups(permissions) {
