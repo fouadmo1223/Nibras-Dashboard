@@ -20,7 +20,12 @@
     "all": "All",
     "edit": "Edit",
     "delete": "Delete",
-    "save": "Save changes"
+    "save": "Save changes",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "status": "Page {page} of {totalPages}"
+    }
   },
   "nav": {
     "main": "Main navigation",
@@ -538,11 +543,6 @@
       "instructor": "Instructor",
       "reviewer": "Search reviewer…",
       "ratingOption": "{rating} ★"
-    },
-    "pagination": {
-      "previous": "Previous",
-      "next": "Next",
-      "status": "Page {page} of {totalPages}"
     }
   },
   "notifications": {
@@ -619,7 +619,104 @@
     "subtitle": "Every recorded administrative action, newest first.",
     "filterPlaceholder": "Filter by action, e.g. user.",
     "empty": "No matching activity.",
-    "systemActor": "System"
+    "systemActor": "System",
+    "actions": {
+      "auth": {
+        "register": "Registered an account",
+        "login": {
+          "succeeded": "Signed in",
+          "failed": "Failed sign-in attempt",
+          "locked": "Account locked after failed attempts",
+          "blocked_suspended": "Blocked sign-in on a suspended account"
+        },
+        "logout": "Signed out",
+        "email": { "verified": "Verified their email address" },
+        "password": {
+          "reset_requested": "Requested a password reset",
+          "reset": "Reset their password",
+          "change_failed": "Failed password change attempt",
+          "changed": "Changed their password"
+        },
+        "refresh": { "reuse_detected": "Detected a reused refresh token" },
+        "session": { "revoked": "Revoked a session" }
+      },
+      "category": {
+        "created": "Created a category",
+        "updated": "Updated a category",
+        "published": "Published a category",
+        "unpublished": "Unpublished a category",
+        "imageUploaded": "Uploaded a category image"
+      },
+      "review": {
+        "upserted": "Submitted a review",
+        "deleted": "Deleted their review",
+        "removedByAdmin": "Removed a review"
+      },
+      "role": {
+        "created": "Created a role",
+        "updated": "Updated a role",
+        "deleted": "Deleted a role"
+      },
+      "instructor": {
+        "added": "Added an instructor",
+        "updated": "Updated an instructor profile",
+        "published": "Published an instructor profile",
+        "unpublished": "Unpublished an instructor profile"
+      },
+      "order": {
+        "placed": "Placed an order",
+        "cancelled": "Cancelled an order",
+        "markedPaid": "Marked an order as paid"
+      },
+      "quiz": {
+        "configSaved": "Saved quiz settings",
+        "questionsSaved": "Saved quiz questions",
+        "graded": "Graded a quiz submission"
+      },
+      "user": {
+        "profile": { "updated": "Updated their profile" },
+        "avatar": { "updated": "Updated their avatar", "removed": "Removed their avatar" },
+        "roles": { "updated": "Updated a user's roles" },
+        "suspended": "Suspended an account",
+        "reactivated": "Reactivated an account"
+      },
+      "course": {
+        "created": "Created a course",
+        "updated": "Updated a course",
+        "publishRequested": "Requested course publishing",
+        "unpublished": "Unpublished a course",
+        "published": "Published a course",
+        "publishRejected": "Rejected a course publish request",
+        "removed": "Removed a course",
+        "imageUploaded": "Uploaded a course cover image",
+        "imageAdded": "Added a course gallery image",
+        "imageRemoved": "Removed a course gallery image",
+        "imagesReordered": "Reordered a course's gallery",
+        "curriculumUpdated": "Updated a course's curriculum",
+        "lessonVideoUploaded": "Uploaded a lesson video"
+      },
+      "coupon": {
+        "created": "Created a coupon",
+        "updated": "Updated a coupon"
+      },
+      "discussion": {
+        "posted": "Posted in a course discussion",
+        "removed": "Removed a discussion post"
+      }
+    },
+    "entities": {
+      "category": "Category",
+      "user": "User",
+      "session": "Session",
+      "review": "Review",
+      "role": "Role",
+      "instructor_profile": "Instructor profile",
+      "order": "Order",
+      "course": "Course",
+      "quizSubmission": "Quiz submission",
+      "coupon": "Coupon",
+      "discussion_post": "Discussion post"
+    }
   },
   "myCourses": {
     "title": "My courses",

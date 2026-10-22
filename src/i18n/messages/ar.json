@@ -20,7 +20,12 @@
     "all": "الكل",
     "edit": "تعديل",
     "delete": "حذف",
-    "save": "حفظ التغييرات"
+    "save": "حفظ التغييرات",
+    "pagination": {
+      "previous": "السابق",
+      "next": "التالي",
+      "status": "صفحة {page} من {totalPages}"
+    }
   },
   "nav": {
     "main": "التنقّل الرئيسي",
@@ -546,11 +551,6 @@
       "instructor": "المدرّب",
       "reviewer": "ابحث عن مُقيِّم…",
       "ratingOption": "{rating} ★"
-    },
-    "pagination": {
-      "previous": "السابق",
-      "next": "التالي",
-      "status": "صفحة {page} من {totalPages}"
     }
   },
   "notifications": {
@@ -627,7 +627,104 @@
     "subtitle": "كل إجراء إداري مُسجَّل، الأحدث أولًا.",
     "filterPlaceholder": "صفِّ حسب الإجراء، مثل user.",
     "empty": "لا يوجد نشاط مطابق.",
-    "systemActor": "النظام"
+    "systemActor": "النظام",
+    "actions": {
+      "auth": {
+        "register": "سجّل حسابًا",
+        "login": {
+          "succeeded": "سجّل الدخول",
+          "failed": "محاولة تسجيل دخول فاشلة",
+          "locked": "قُفل الحساب بعد محاولات فاشلة",
+          "blocked_suspended": "مُنع تسجيل الدخول لحساب مُوقَف"
+        },
+        "logout": "سجّل الخروج",
+        "email": { "verified": "فعّل بريده الإلكتروني" },
+        "password": {
+          "reset_requested": "طلب إعادة تعيين كلمة المرور",
+          "reset": "أعاد تعيين كلمة المرور",
+          "change_failed": "محاولة فاشلة لتغيير كلمة المرور",
+          "changed": "غيّر كلمة المرور"
+        },
+        "refresh": { "reuse_detected": "اكتُشف استخدام رمز تحديث مكرر" },
+        "session": { "revoked": "ألغى جلسة" }
+      },
+      "category": {
+        "created": "أنشأ تصنيفًا",
+        "updated": "حدّث تصنيفًا",
+        "published": "نشر تصنيفًا",
+        "unpublished": "ألغى نشر تصنيف",
+        "imageUploaded": "رفع صورة تصنيف"
+      },
+      "review": {
+        "upserted": "أرسل تقييمًا",
+        "deleted": "حذف تقييمه",
+        "removedByAdmin": "أزال تقييمًا"
+      },
+      "role": {
+        "created": "أنشأ دورًا",
+        "updated": "حدّث دورًا",
+        "deleted": "حذف دورًا"
+      },
+      "instructor": {
+        "added": "أضاف مدرّبًا",
+        "updated": "حدّث ملف مدرّب",
+        "published": "نشر ملف مدرّب",
+        "unpublished": "ألغى نشر ملف مدرّب"
+      },
+      "order": {
+        "placed": "قدّم طلبًا",
+        "cancelled": "ألغى طلبًا",
+        "markedPaid": "وسم طلبًا كمدفوع"
+      },
+      "quiz": {
+        "configSaved": "حفظ إعدادات اختبار",
+        "questionsSaved": "حفظ أسئلة اختبار",
+        "graded": "صحّح إجابة اختبار"
+      },
+      "user": {
+        "profile": { "updated": "حدّث ملفه الشخصي" },
+        "avatar": { "updated": "حدّث صورته الرمزية", "removed": "أزال صورته الرمزية" },
+        "roles": { "updated": "حدّث أدوار مستخدم" },
+        "suspended": "أوقف حسابًا",
+        "reactivated": "أعاد تفعيل حساب"
+      },
+      "course": {
+        "created": "أنشأ دورة",
+        "updated": "حدّث دورة",
+        "publishRequested": "طلب نشر دورة",
+        "unpublished": "ألغى نشر دورة",
+        "published": "نشر دورة",
+        "publishRejected": "رفض طلب نشر دورة",
+        "removed": "أزال دورة",
+        "imageUploaded": "رفع صورة غلاف دورة",
+        "imageAdded": "أضاف صورة لمعرض دورة",
+        "imageRemoved": "أزال صورة من معرض دورة",
+        "imagesReordered": "أعاد ترتيب معرض دورة",
+        "curriculumUpdated": "حدّث منهج دورة",
+        "lessonVideoUploaded": "رفع فيديو درس"
+      },
+      "coupon": {
+        "created": "أنشأ كوبونًا",
+        "updated": "حدّث كوبونًا"
+      },
+      "discussion": {
+        "posted": "نشر في نقاش دورة",
+        "removed": "أزال منشور نقاش"
+      }
+    },
+    "entities": {
+      "category": "تصنيف",
+      "user": "مستخدم",
+      "session": "جلسة",
+      "review": "تقييم",
+      "role": "دور",
+      "instructor_profile": "ملف مدرّب",
+      "order": "طلب",
+      "course": "دورة",
+      "quizSubmission": "إجابة اختبار",
+      "coupon": "كوبون",
+      "discussion_post": "منشور نقاش"
+    }
   },
   "myCourses": {
     "title": "دوراتي",

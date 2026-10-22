@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, Search, ShieldCheck, Users as UsersIcon, UserX, X } from 'lucide-react';
+import { Search, ShieldCheck, Users as UsersIcon, UserX, X } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Avatar from '@/components/ui/Avatar';
 import Button from '@/components/ui/Button';
@@ -9,6 +9,7 @@ import Card from '@/components/ui/Card';
 import Field from '@/components/ui/Field';
 import { inputClassName } from '@/components/ui/Input';
 import Menu from '@/components/ui/Menu';
+import Pagination from '@/components/ui/Pagination';
 import { useCurrentUser } from '@/features/auth/current-user';
 import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
@@ -295,7 +296,7 @@ export default function UsersPage() {
           ) : (
             <motion.ul variants={rows_} initial="hidden" animate="show" className="divide-y divide-border">
               {rows.map((u) => (
-                <motion.li key={u.id} variants={row} className="flex flex-wrap items-center gap-x-4 gap-y-3 px-6 py-4">
+                <motion.li key={u.id} variants={row} className="flex flex-wrap items-center gap-x-4 gap-y-3 px-6 py-4 transition-colors hover:bg-surface-muted/50">
                   <div className="flex min-w-60 flex-1 items-center gap-3">
                     <Avatar user={u} size="sm" />
                     <div className="min-w-0">
@@ -352,29 +353,7 @@ export default function UsersPage() {
             </motion.ul>
           )}
 
-          {pagination && totalPages > 1 ? (
-            <div className="flex items-center justify-between border-t border-border px-6 py-3">
-              <button
-                type="button"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted disabled:pointer-events-none disabled:opacity-40"
-              >
-                <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden="true" />
-                {t('reviews.pagination.previous')}
-              </button>
-              <span className="text-sm text-foreground-subtle">{t('reviews.pagination.status', { page, totalPages })}</span>
-              <button
-                type="button"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted disabled:pointer-events-none disabled:opacity-40"
-              >
-                {t('reviews.pagination.next')}
-                <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
+          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
         </Card>
       </motion.div>
 

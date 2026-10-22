@@ -1,9 +1,24 @@
 import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, ScrollText, Search } from 'lucide-react';
+import {
+  BookOpen,
+  ClipboardList,
+  FolderTree,
+  GraduationCap,
+  LogIn,
+  MessageSquare,
+  Scale,
+  ScrollText,
+  Search,
+  Shield,
+  Star,
+  Ticket,
+  Users as UsersIcon,
+} from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Card from '@/components/ui/Card';
+import Pagination from '@/components/ui/Pagination';
 import { useI18n } from '@/i18n/I18nProvider';
 import { errorMessage } from '@/lib/api-errors';
 import { auditLogKeys, listAuditLogs } from '@/services/audit-logs.service';
@@ -13,6 +28,27 @@ const item = { hidden: { opacity: 0, y: 16 }, show: { opacity: 1, y: 0, transiti
 const rows_ = { hidden: {}, show: { transition: { staggerChildren: 0.045 } } };
 const row = { hidden: { opacity: 0, y: 10 }, show: { opacity: 1, y: 0, transition: { duration: 0.3 } } };
 const LIMIT = 20;
+
+/** Action domain (the part before the first dot) → an icon that gives each row a quick visual anchor. */
+const ACTION_ICONS = {
+  auth: LogIn,
+  user: UsersIcon,
+  role: Shield,
+  course: BookOpen,
+  order: ClipboardList,
+  coupon: Ticket,
+  review: Star,
+  category: FolderTree,
+  instructor: GraduationCap,
+  quiz: Scale,
+  discussion: MessageSquare,
+};
+
+/** Falls back to the raw dotted key (or entity type) when no translation exists for it yet. */
+function translateOrRaw(t, key, raw) {
+  const label = t(key);
+  return label === key ? raw : label;
+}
 
 /** Admin, read-only audit trail: every recorded action, newest first, filterable by action prefix. */
 export default function AuditLogPage() {
@@ -81,50 +117,39 @@ export default function AuditLogPage() {
             </div>
           ) : (
             <motion.ul variants={rows_} initial="hidden" animate="show" className="divide-y divide-border">
-              {rows.map((entry) => (
-                <motion.li key={entry.id} variants={row} className="flex flex-wrap items-start gap-x-4 gap-y-1 px-6 py-3.5">
-                  <div className="min-w-60 flex-1">
-                    <p className="font-mono text-sm font-medium text-foreground">{entry.action}</p>
-                    <p className="mt-0.5 text-xs text-foreground-subtle">
-                      {entry.actor ? (
-                        <>
-                          {entry.actor.name} <span dir="ltr">· {entry.actor.email}</span>
-                        </>
-                      ) : (
-                        t('auditLog.systemActor')
-                      )}
-                      {entry.entityType ? ` · ${entry.entityType}${entry.entityId ? ` #${entry.entityId.slice(0, 8)}` : ''}` : ''}
-                    </p>
-                  </div>
-                  <span className="shrink-0 text-xs text-foreground-subtle">{format.date(entry.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}</span>
-                </motion.li>
-              ))}
+              {rows.map((entry) => {
+                const Icon = ACTION_ICONS[entry.action.split('.')[0]] ?? ScrollText;
+                return (
+                  <motion.li key={entry.id} variants={row} className="flex flex-wrap items-start gap-x-4 gap-y-1 px-6 py-3.5 transition-colors hover:bg-surface-muted/50">
+                    <span className="grid size-9 shrink-0 place-items-center rounded-lg bg-primary-soft text-primary">
+                      <Icon className="size-4" aria-hidden="true" />
+                    </span>
+                    <div className="min-w-60 flex-1">
+                      <p className="text-sm font-medium text-foreground">{translateOrRaw(t, `auditLog.actions.${entry.action}`, entry.action)}</p>
+                      <p className="mt-0.5 font-mono text-[11px] text-foreground-subtle" dir="ltr">
+                        {entry.action}
+                      </p>
+                      <p className="mt-1 text-xs text-foreground-subtle">
+                        {entry.actor ? (
+                          <>
+                            {entry.actor.name} <span dir="ltr">· {entry.actor.email}</span>
+                          </>
+                        ) : (
+                          t('auditLog.systemActor')
+                        )}
+                        {entry.entityType
+                          ? ` · ${translateOrRaw(t, `auditLog.entities.${entry.entityType}`, entry.entityType)}${entry.entityId ? ` #${entry.entityId.slice(0, 8)}` : ''}`
+                          : ''}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-xs text-foreground-subtle">{format.date(entry.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}</span>
+                  </motion.li>
+                );
+              })}
             </motion.ul>
           )}
 
-          {pagination && totalPages > 1 ? (
-            <div className="flex items-center justify-between border-t border-border px-6 py-3">
-              <button
-                type="button"
-                disabled={page <= 1}
-                onClick={() => setPage((p) => p - 1)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted disabled:pointer-events-none disabled:opacity-40"
-              >
-                <ChevronLeft className="size-4 rtl:-scale-x-100" aria-hidden="true" />
-                {t('reviews.pagination.previous')}
-              </button>
-              <span className="text-sm text-foreground-subtle">{t('reviews.pagination.status', { page, totalPages })}</span>
-              <button
-                type="button"
-                disabled={page >= totalPages}
-                onClick={() => setPage((p) => p + 1)}
-                className="inline-flex h-9 items-center gap-1.5 rounded-lg border border-border px-3 text-sm font-medium text-foreground transition-colors hover:bg-surface-muted disabled:pointer-events-none disabled:opacity-40"
-              >
-                {t('reviews.pagination.next')}
-                <ChevronRight className="size-4 rtl:-scale-x-100" aria-hidden="true" />
-              </button>
-            </div>
-          ) : null}
+          <Pagination page={page} totalPages={totalPages} onChange={setPage} />
         </Card>
       </motion.div>
     </motion.div>
