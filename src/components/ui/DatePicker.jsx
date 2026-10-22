@@ -73,7 +73,6 @@ export default function DatePicker({ value, onChange, placeholder, label, classN
         aria-expanded={open}
         aria-controls={open ? panelId : undefined}
         onClick={() => (open ? setOpen(false) : openPicker())}
-        dir="ltr"
         className={cn(inputClassName, 'flex items-center gap-2.5 text-start', !value && 'text-foreground-subtle')}
       >
         <Calendar className="size-4 shrink-0 text-foreground-subtle" aria-hidden="true" />
