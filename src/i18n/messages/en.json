@@ -456,7 +456,7 @@
   },
   "orders": {
     "title": "Orders",
-    "subtitle": "Orders students have placed. Mark one paid once you've confirmed payment out-of-band — this enrols the student automatically.",
+    "subtitle": "Orders students have placed. Most are paid automatically through Stripe; mark a still-pending one paid yourself once you've confirmed payment out-of-band (e.g. a bank transfer) — this enrols the student automatically either way.",
     "loading": "Loading orders",
     "empty": {
       "title": "No orders yet",
@@ -466,6 +466,10 @@
       "PENDING": "Pending",
       "PAID": "Paid",
       "CANCELLED": "Cancelled"
+    },
+    "paymentMethod": {
+      "stripe": "Stripe",
+      "manual": "Manual"
     },
     "actions": {
       "markPaid": "Mark as paid",

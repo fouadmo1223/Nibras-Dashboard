@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { motion } from 'motion/react';
-import { Check, ClipboardList, X } from 'lucide-react';
+import { Banknote, Check, ClipboardList, CreditCard, X } from 'lucide-react';
 import Alert from '@/components/ui/Alert';
 import Button from '@/components/ui/Button';
 import Card from '@/components/ui/Card';
@@ -133,6 +133,21 @@ export default function OrdersPage() {
                     <span className={cn('inline-flex items-center gap-1.5 rounded-md px-2.5 py-1 text-xs font-medium', STATUS_TONE[o.status])}>
                       {t(`orders.status.${o.status}`)}
                     </span>
+                    {o.status === 'PAID' ? (
+                      <span className="inline-flex items-center gap-1.5 rounded-md bg-surface-muted px-2.5 py-1 text-xs font-medium text-foreground-muted">
+                        {o.stripePaymentIntentId ? (
+                          <>
+                            <CreditCard className="size-3.5" aria-hidden="true" />
+                            {t('orders.paymentMethod.stripe')}
+                          </>
+                        ) : (
+                          <>
+                            <Banknote className="size-3.5" aria-hidden="true" />
+                            {t('orders.paymentMethod.manual')}
+                          </>
+                        )}
+                      </span>
+                    ) : null}
                     {o.status === 'PENDING' ? (
                       <>
                         <Button
