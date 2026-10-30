@@ -8,6 +8,7 @@ import { useI18n } from '@/i18n/I18nProvider';
 import { cn } from '@/lib/cn';
 import { usePreferences } from '@/stores/preferences-store';
 import Breadcrumbs from './Breadcrumbs';
+import ChatWidget from './ChatWidget';
 import CommandPalette from './CommandPalette';
 import NotificationBell from './NotificationBell';
 import Sidebar, { SidebarNav } from './Sidebar';
@@ -150,6 +151,7 @@ export default function AppShell() {
 
       <CommandPalette open={paletteOpen} onClose={() => setPaletteOpen(false)} onSignOut={openSignOut} />
       <SignOutDialog open={signingOut} onClose={() => setSigningOut(false)} />
+      <ChatWidget />
     </div>
   );
 }

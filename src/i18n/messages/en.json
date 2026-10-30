@@ -119,6 +119,13 @@
     "label": "Language",
     "change": "Change language, current: {language}"
   },
+  "chatbot": {
+    "title": "Nibras Assistant",
+    "close": "Close chat",
+    "placeholder": "Ask a question…",
+    "emptyState": "Ask how the platform or dashboard works.",
+    "thinking": "Thinking…"
+  },
   "overview": {
     "greeting": "Welcome back, {name}",
     "title": "Overview",
