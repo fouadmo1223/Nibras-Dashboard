@@ -122,18 +122,9 @@
   "overview": {
     "greeting": "Welcome back, {name}",
     "title": "Overview",
-    "subtitle": "Platform health at a glance. Learning and revenue analytics arrive with the next modules.",
-    "api": {
-      "title": "API connection",
-      "recheck": "Re-check",
-      "checking": "Checking…",
-      "ok": "Operational",
-      "degraded": "Degraded",
-      "down": "Unreachable",
-      "endpoint": "Endpoint",
-      "database": "Database",
-      "version": "Version"
-    },
+    "subtitle": "Platform activity, revenue and what needs your attention.",
+    "viewAnalytics": "View full analytics",
+    "revenue": "Revenue ({days}d)",
     "account": {
       "title": "Your access",
       "roles": "Roles",
@@ -149,9 +140,28 @@
       "courses": "Published courses",
       "loading": "Loading platform counts"
     },
-    "next": {
-      "title": "Coming next",
-      "body": "Learning analytics, revenue and enrolment trends appear here once enrolments are live."
+    "pendingApprovals": {
+      "title": "Awaiting approval",
+      "cta": "Review courses",
+      "empty": "Nothing waiting on you.",
+      "body": {
+        "one": "{count} course is waiting for your review.",
+        "other": "{count} courses are waiting for your review."
+      }
+    },
+    "pendingOrders": {
+      "title": "Pending orders",
+      "cta": "View orders",
+      "empty": "No orders waiting on confirmation.",
+      "body": {
+        "one": "{count} order hasn’t been paid yet.",
+        "other": "{count} orders haven’t been paid yet."
+      }
+    },
+    "activity": {
+      "title": "Recent activity",
+      "viewAll": "View audit log",
+      "empty": "No activity yet."
     },
     "mine": {
       "subtitle": "Your teaching activity at a glance.",
