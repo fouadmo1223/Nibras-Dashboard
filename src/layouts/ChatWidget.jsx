@@ -3,6 +3,7 @@ import { useMutation, useQuery } from '@tanstack/react-query';
 import { AnimatePresence, motion } from 'motion/react';
 import { MessageCircle, Send, Sparkles, X } from 'lucide-react';
 import { cn } from '@/lib/cn';
+import { renderInlineMarkdown } from '@/lib/inline-markdown';
 import { errorMessage } from '@/lib/api-errors';
 import { useI18n } from '@/i18n/I18nProvider';
 import { getChatbotStatus, sendChatMessage } from '@/services/chatbot.service';
@@ -35,7 +36,9 @@ function TypedText({ text, onDone }) {
   const done = shown.length === text.length;
   return (
     <>
-      {shown}
+      {/* Markdown syntax (links/bold) only renders once the full text has arrived — mid-reveal
+          it would show raw `[`/`**` characters, since a partial match can't be parsed yet. */}
+      {done ? renderInlineMarkdown(shown) : shown}
       {!done ? <span className="ms-0.5 inline-block h-3.5 w-[2px] animate-pulse bg-current align-middle" aria-hidden="true" /> : null}
     </>
   );
@@ -72,7 +75,11 @@ function MessageBubble({ message, animateText, onTypedDone }) {
             : 'rounded-es-md bg-surface-muted text-foreground',
       )}
     >
-      {animateText ? <TypedText text={message.content} onDone={onTypedDone} /> : message.content}
+      {animateText
+        ? <TypedText text={message.content} onDone={onTypedDone} />
+        : message.role === 'assistant' && !message.error
+          ? renderInlineMarkdown(message.content)
+          : message.content}
     </motion.div>
   );
 }

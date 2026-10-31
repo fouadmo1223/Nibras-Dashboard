@@ -460,12 +460,22 @@ function AdminOverview() {
               {activityRows.map((entry) => {
                 const Icon = ACTION_ICONS[entry.action.split('.')[0]] ?? ScrollText;
                 return (
-                  <motion.li key={entry.id} variants={row} className="flex items-center gap-3 py-3 first:pt-0 last:pb-0">
+                  <motion.li key={entry.id} variants={row} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
                     <span className="grid size-8 shrink-0 place-items-center rounded-lg bg-surface-muted text-foreground-muted">
                       <Icon className="size-4" aria-hidden="true" />
                     </span>
-                    <p className="min-w-0 flex-1 truncate text-sm text-foreground">{translateOrRaw(t, `auditLog.actions.${entry.action}`, entry.action)}</p>
-                    <span className="shrink-0 text-xs text-foreground-subtle">{format.relativeTime(new Date(entry.createdAt))}</span>
+                    <div className="min-w-0 flex-1">
+                      <p className="truncate text-sm text-foreground">{translateOrRaw(t, `auditLog.actions.${entry.action}`, entry.action)}</p>
+                      <p className="mt-0.5 truncate text-xs text-foreground-subtle">
+                        {entry.actor ? entry.actor.name : t('auditLog.systemActor')}
+                        {entry.entityType
+                          ? ` · ${translateOrRaw(t, `auditLog.entities.${entry.entityType}`, entry.entityType)}${entry.entityId ? ` #${entry.entityId.slice(0, 8)}` : ''}`
+                          : ''}
+                      </p>
+                    </div>
+                    <span className="shrink-0 text-xs text-foreground-subtle" title={format.date(entry.createdAt, { dateStyle: 'medium', timeStyle: 'short' })}>
+                      {format.relativeTime(new Date(entry.createdAt))}
+                    </span>
                   </motion.li>
                 );
               })}
