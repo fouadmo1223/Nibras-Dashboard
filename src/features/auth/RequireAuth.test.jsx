@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
@@ -8,6 +8,7 @@ import RequireAuth from './RequireAuth';
 import LoginPage from '@/pages/LoginPage';
 import { useCurrentUser } from './current-user';
 import { useLogout } from './use-auth';
+import { tokenStorage } from '@/lib/token-storage';
 
 /** Mimics a protected page: reads the user from context and can sign out. */
 function ProtectedProbe() {
@@ -55,13 +56,23 @@ function renderAt(path) {
 }
 
 const session = (permissions, roles = ['ADMIN']) =>
-  json(200, { success: true, data: { user: { name: 'Ada', email: 'ada@nibras.test', roles, permissions }, csrfToken: 'c' } });
+  json(200, { success: true, data: { user: { name: 'Ada', email: 'ada@nibras.test', roles, permissions } } });
+const loginResult = (permissions, roles = ['ADMIN']) =>
+  json(200, {
+    success: true,
+    data: { user: { name: 'Ada', email: 'ada@nibras.test', roles, permissions }, accessToken: 'at', refreshToken: 'rt' },
+  });
 const unauthorized = () => json(401, { success: false, error: { code: 'UNAUTHORIZED' } });
 
-afterEach(() => vi.unstubAllGlobals());
+beforeEach(() => tokenStorage.setRefreshToken('rt'));
+afterEach(() => {
+  vi.unstubAllGlobals();
+  tokenStorage.clear();
+});
 
 describe('RequireAuth', () => {
   it('redirects signed-out visitors to /login, remembering where they were going', async () => {
+    tokenStorage.clear();
     stubApi({ 'GET /auth/session': unauthorized });
     const router = renderAt('/');
     expect(await screen.findByRole('heading', { name: 'Sign in' })).toBeInTheDocument();
@@ -82,12 +93,13 @@ describe('RequireAuth', () => {
   });
 
   it('signs in and returns to the protected page', async () => {
+    tokenStorage.clear();
     let signedIn = false;
     const fetchMock = stubApi({
       'GET /auth/session': () => (signedIn ? session(['dashboard.access']) : unauthorized()),
       'POST /auth/login': () => {
         signedIn = true;
-        return session(['dashboard.access']);
+        return loginResult(['dashboard.access']);
       },
     });
     renderAt('/');
@@ -98,7 +110,8 @@ describe('RequireAuth', () => {
 
     expect(await screen.findByRole('heading', { name: 'Overview' })).toBeInTheDocument();
     const login = fetchMock.mock.calls.find(([, init]) => init?.method === 'POST');
-    expect(login[1].credentials).toBe('include');
+    expect(login[1].headers['X-Auth-Transport']).toBe('token');
+    expect(tokenStorage.getAccessToken()).toBe('at');
   });
 
   it('signs out from a protected page without crashing and lands on /login', async () => {

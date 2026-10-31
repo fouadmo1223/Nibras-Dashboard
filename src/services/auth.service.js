@@ -1,4 +1,5 @@
-import { apiRequest, setCsrfToken } from './api-client';
+import { apiRequest, storeSession } from './api-client';
+import { tokenStorage } from '@/lib/token-storage';
 
 export const authKeys = {
   all: ['auth'],
@@ -8,27 +9,33 @@ export const authKeys = {
 /** True only for the session query — everything else is private data dropped on sign-out. */
 export const isSessionQuery = (query) => query.queryHash === JSON.stringify(authKeys.session());
 
-const withCsrf = (result) => {
-  setCsrfToken(result.data.csrfToken);
+const withSession = (result) => {
+  storeSession(result.data);
   return result;
 };
 
 // Mutations resolve to `{ data, message }` — `message` is the API's confirmation text, shown as-is.
-export const login = (body) => apiRequest('/auth/login', { method: 'POST', body }).then(withCsrf);
+export const login = (body) => apiRequest('/auth/login', { method: 'POST', body }).then(withSession);
 
 export async function logout() {
-  const result = await apiRequest('/auth/logout', { method: 'POST' });
-  setCsrfToken(null);
-  return result;
+  const refreshToken = tokenStorage.getRefreshToken();
+  try {
+    return refreshToken
+      ? await apiRequest('/auth/logout', { method: 'POST', body: { refreshToken } })
+      : { data: null, message: undefined };
+  } finally {
+    tokenStorage.clear();
+  }
 }
 
-/** Current session ({ user, session, csrfToken }), or null when signed out. */
+/** Current session ({ user, session }), or null when signed out. */
 export async function getSession() {
+  if (!tokenStorage.getRefreshToken()) return null;
   try {
-    return withCsrf(await apiRequest('/auth/session')).data;
+    return (await apiRequest('/auth/session')).data;
   } catch (error) {
     if (error.status === 401) {
-      setCsrfToken(null);
+      tokenStorage.clear();
       return null;
     }
     throw error;

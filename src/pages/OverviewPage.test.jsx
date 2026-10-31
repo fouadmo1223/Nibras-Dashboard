@@ -9,7 +9,7 @@ import OverviewPage from './OverviewPage';
 // Rendered behind RequireAuth in the app, which provides the user. OverviewPage picks the admin
 // bento over the instructor one based on the `courses.manage` permission specifically, not the
 // `ADMIN` role name — this fixture needs it to exercise that view.
-const SESSION = { user: { name: 'Ada Admin', roles: ['ADMIN'], permissions: ['dashboard.access', 'courses.manage'] }, csrfToken: 'c' };
+const SESSION = { user: { name: 'Ada Admin', roles: ['ADMIN'], permissions: ['dashboard.access', 'courses.manage'] } };
 
 const ENVELOPE = (data, meta = {}) => ({ success: true, data, meta });
 

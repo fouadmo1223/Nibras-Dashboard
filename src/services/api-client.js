@@ -1,18 +1,18 @@
+import { tokenStorage } from '@/lib/token-storage';
+
 const DEFAULT_API_URL = 'http://localhost:5000/api/v1';
 export const API_URL = (import.meta.env.VITE_API_URL || DEFAULT_API_URL).replace(/\/+$/, '');
 
-const SAFE_METHODS = new Set(['GET', 'HEAD', 'OPTIONS']);
 const AUTH_PATHS_WITHOUT_REFRESH = ['/auth/login', '/auth/refresh', '/auth/logout'];
 
-/** The API sets a readable `nb_session=1` cookie while a refresh token exists. */
-const hasSessionHint = () => typeof document !== 'undefined' && /(?:^|;\s*)nb_session=1/.test(document.cookie);
-
 /**
- * 401s worth one refresh attempt: an expired access token, or a missing/invalid one while
- * the session hint says a refresh token should still exist.
+ * 401s worth one refresh attempt: an expired access token, or a missing/invalid one while a
+ * refresh token is still in storage (e.g. a fresh tab, before the in-memory access token has
+ * been restored).
  */
 const shouldRefresh = (error) =>
-  error.code === 'TOKEN_EXPIRED' || (hasSessionHint() && ['UNAUTHORIZED', 'SESSION_EXPIRED'].includes(error.code));
+  error.code === 'TOKEN_EXPIRED' ||
+  (Boolean(tokenStorage.getRefreshToken()) && ['UNAUTHORIZED', 'SESSION_EXPIRED'].includes(error.code));
 
 /** Error raised for any non-2xx API response, carrying the API error envelope. */
 export class ApiError extends Error {
@@ -26,12 +26,12 @@ export class ApiError extends Error {
   }
 }
 
-// Session-bound CSRF token from login/refresh/session responses; memory only.
-let csrfToken = null;
-export const setCsrfToken = (token) => {
-  csrfToken = token || null;
-};
-export const getCsrfToken = () => csrfToken;
+/** Persists a token-transport auth response (login/refresh). */
+export function storeSession(data) {
+  tokenStorage.setAccessToken(data.accessToken);
+  tokenStorage.setRefreshToken(data.refreshToken);
+  return data;
+}
 
 const expiredListeners = new Set();
 /** Subscribe to "the session is gone" (refresh failed). Returns an unsubscribe function. */
@@ -51,19 +51,23 @@ function buildUrl(path, query) {
 }
 
 async function send(path, { method = 'GET', body, query, headers, signal } = {}) {
+  const accessToken = tokenStorage.getAccessToken();
   let response;
   try {
     response = await fetch(buildUrl(path, query), {
       method,
-      credentials: 'include',
       signal,
       headers: {
         Accept: 'application/json',
         // The dashboard language, so API messages come back translated.
         'Accept-Language': document.documentElement.lang || 'en',
+        // Tokens, never cookies: the dashboard, website and API are three separate origins
+        // with no shared parent domain, so SameSite cookie auth can't work here at all.
+        'X-Auth-Transport': 'token',
+        'X-Client-Type': 'web',
         // FormData (file uploads) sets its own multipart boundary header.
         ...(body !== undefined && !(body instanceof FormData) ? { 'Content-Type': 'application/json' } : {}),
-        ...(!SAFE_METHODS.has(method) && csrfToken ? { 'X-CSRF-Token': csrfToken } : {}),
+        ...(accessToken ? { Authorization: `Bearer ${accessToken}` } : {}),
         ...headers,
       },
       body: body === undefined || body instanceof FormData ? body : JSON.stringify(body),
@@ -86,9 +90,12 @@ let refreshInFlight = null;
 export function refreshSession() {
   refreshInFlight ??= (async () => {
     const attempt = async () => {
-      const { data } = await send('/auth/refresh', { method: 'POST' });
-      setCsrfToken(data.csrfToken);
-      return data;
+      const refreshToken = tokenStorage.getRefreshToken();
+      if (!refreshToken) {
+        throw new ApiError(401, { error: { code: 'REFRESH_TOKEN_INVALID', message: 'Not signed in.' } });
+      }
+      const { data } = await send('/auth/refresh', { method: 'POST', body: { refreshToken } });
+      return storeSession(data);
     };
     try {
       return await attempt();
@@ -121,7 +128,7 @@ export async function apiRequest(path, options = {}) {
     try {
       await refreshSession();
     } catch (refreshError) {
-      setCsrfToken(null);
+      tokenStorage.clear();
       expiredListeners.forEach((listener) => listener(refreshError));
       throw refreshError;
     }
@@ -134,10 +141,12 @@ function sendWithProgress(path, formData, { onProgress, signal } = {}) {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open('POST', buildUrl(path), true);
-    xhr.withCredentials = true;
     xhr.setRequestHeader('Accept', 'application/json');
     xhr.setRequestHeader('Accept-Language', document.documentElement.lang || 'en');
-    if (csrfToken) xhr.setRequestHeader('X-CSRF-Token', csrfToken);
+    xhr.setRequestHeader('X-Auth-Transport', 'token');
+    xhr.setRequestHeader('X-Client-Type', 'web');
+    const accessToken = tokenStorage.getAccessToken();
+    if (accessToken) xhr.setRequestHeader('Authorization', `Bearer ${accessToken}`);
 
     xhr.upload.onprogress = (event) => {
       if (onProgress && event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
@@ -175,7 +184,7 @@ export async function apiUpload(path, formData, { onProgress, signal } = {}) {
     try {
       await refreshSession();
     } catch (refreshError) {
-      setCsrfToken(null);
+      tokenStorage.clear();
       expiredListeners.forEach((listener) => listener(refreshError));
       throw refreshError;
     }
