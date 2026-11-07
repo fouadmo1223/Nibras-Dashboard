@@ -1,4 +1,4 @@
-import { apiRequest, apiUpload } from './api-client';
+import { apiRequest, ApiError } from './api-client';
 
 export const courseKeys = {
   all: ['courses'],
@@ -43,8 +43,39 @@ export const removeCourseGalleryImage = (id, imageId) => apiRequest(`/admin/cour
 export const reorderCourseGalleryImages = (id, imageIds) =>
   apiRequest(`/admin/courses/${id}/images/reorder`, { method: 'PATCH', body: { imageIds } });
 
-export function uploadLessonVideo(courseId, lessonId, file, onProgress) {
-  const body = new FormData();
-  body.append('video', file);
-  return apiUpload(`/admin/courses/${courseId}/lessons/${lessonId}/video`, body, { onProgress });
+/** Raw PUT straight to the presigned URL — never through apiRequest/apiUpload: this isn't our API, and attaching our own auth headers would risk invalidating the upload's signature. */
+function putDirect(url, file, onProgress) {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.open('PUT', url, true);
+    xhr.setRequestHeader('Content-Type', file.type);
+    xhr.upload.onprogress = (event) => {
+      if (onProgress && event.lengthComputable) onProgress(Math.round((event.loaded / event.total) * 100));
+    };
+    xhr.onload = () => {
+      if (xhr.status >= 200 && xhr.status < 300) resolve();
+      else reject(new ApiError(0, { error: { code: 'NETWORK_ERROR', message: 'Unable to reach the server.' } }));
+    };
+    xhr.onerror = () => reject(new ApiError(0, { error: { code: 'NETWORK_ERROR', message: 'Unable to reach the server.' } }));
+    xhr.send(file);
+  });
+}
+
+/**
+ * Large lesson videos can far exceed what a serverless Function can accept as a request body, so
+ * this uploads straight to storage instead of proxying the bytes through our API: get a
+ * presigned URL (1), PUT the file directly to it (2), then tell the API the upload is done (3)
+ * so it can verify the file and point the lesson at it.
+ */
+export async function uploadLessonVideo(courseId, lessonId, file, onProgress) {
+  const { data } = await apiRequest(`/admin/courses/${courseId}/lessons/${lessonId}/video/upload-url`, {
+    method: 'POST',
+    body: { contentType: file.type },
+  });
+  onProgress?.(0);
+  await putDirect(data.uploadUrl, file, onProgress);
+  return apiRequest(`/admin/courses/${courseId}/lessons/${lessonId}/video/complete`, {
+    method: 'POST',
+    body: { key: data.key },
+  });
 }
